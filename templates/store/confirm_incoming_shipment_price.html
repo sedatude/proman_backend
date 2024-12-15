@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+  <section class="content">
+
+    <div class="card-body">
+      <form action="{% url 'confirm_incoming_shipment_price' shipin.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+          <div class="card-header">
+            <h1 class="card-title text-warning"> Lütfen Malzemelerin Birim Fiyatlarını giriniz ve mevcut ise Fatura Görselini yükleyiniz.
+            </h1>
+
+          </div>
+
+        </div>
+        <br>
+        <div class="col-md-12">
+          <div class="row">
+
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">Kayıt Tarihi</label>
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{shipin.created_at|date:"Y-m-d H:i:s"}}</text>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">İrsaliye No</label>
+                <text id="number_str" name="number_str" class="form-control"
+                  aria-readonly="true">{{shipin.despatch_number}}</text>
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">Gönderen Firma</label>
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{shipin.company.name}}</text>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">1. Fatura</label>
+                <input type="file" name="photo_1" id="photo_1" class="form-control" accept=".pdf,.jpeg,.jpg"
+                  onchange="Filevalidation('photo_1')" />
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">2. Fatura</label>
+                <input type="file" name="photo_2" id="photo_2" class="form-control" accept=".pdf,.jpeg,.jpg"
+                  onchange="Filevalidation('photo_2')" />
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="text-muted">3. Fatura</label>
+                <input type="file" name="photo_3" id="photo_3" class="form-control" accept=".pdf,.jpeg,.jpg"
+                  onchange="Filevalidation('photo_3')" />
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="form-group">
+                {% if shipin.note %}
+                <label class="text-muted">Genel Not: {{ shipin.note }}</label>
+                {%else%}
+                <label class="text-muted">Genel Not: Kullanıcı tarafından girilmedi...!</label>
+                {%endif%}
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="form-group">
+                {% if shipin.note_despatch %}
+                <label class="text-muted">İrsaliye Not: {{ shipin.note_despatch }}</label>
+                {%else%}
+                <label class="text-muted">İrsaliye Not: Kullanıcı tarafından girilmedi...!</label>
+                {%endif%}
+
+              </div>
+            </div>
+          </div>
+
+          <br>
+
+
+          {% for object in stock_list %}
+          <div class="row">
+            <div class="col-sm-4 col-md-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">{{ forloop.counter }}. Malzeme </label>
+                <text id="material_{{forloop.counter}}" name="material_{{forloop.counter}}" class="form-control"
+                  aria-readonly="true" value="{{object.material__name}}">{{object.material__name}}(KDV:{{object.material__vat}})</text>
+              </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 col-12">
+              <div class="form-group">
+                <label class="text-muted">Adet-KG</label>
+                <text id="quantity_{{forloop.counter}}" name="quantity_{{forloop.counter}}" class="form-control"
+                  aria-readonly="true">{{object.quantity}}</text>
+              </div>
+            </div>
+
+
+
+            <div class="col-sm-2 col-md-2 col-12">
+              <div class="form-group">
+                <label class="text-muted">Fiyat</label>
+                <input type="number" step="any" id="price_{{forloop.counter}}" name="price_{{forloop.counter}}"
+                  class="form-control" value="{{object.price}}" required>
+              </div>
+            </div>
+
+
+            <div class="col-sm-2 col-md-2 col-12">
+              <div class="form-group">
+                <label class="text-muted">Para Birim</label>
+                <select id="money_{{forloop.counter}}" name="money_{{forloop.counter}}" class="form-control" onchange="money_check('{{forloop.counter}}')">
+                  {% for money in money_list %}
+                  <option value="{{money.id}}" {% if money.id == object.money_id %}selected={{ money.id }}{% endif %}>
+                    {{money.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+           
+
+
+            <div class="col-sm-2 col-md-2 col-12">
+              <div class="form-group" id="dv_{{forloop.counter}}" style="display: none">
+                <div class="form-group">
+                  <label class="text-muted">Son Kur</label>
+                  <input type="number" step="any" id="money_rate_price_{{forloop.counter}}"
+                    name="money_rate_price_{{forloop.counter}}" class="form-control" value="{{object.money_rate_price}}"
+                    required>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          {% endfor %}
+
+
+
+
+
+
+
+
+
+          <hr>
+
+
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="form-group">
+                <label class="text-muted">Açıklama</label>
+                <textarea id="note_manager" name="note_manager" class="form-control" aria-readonly="true"
+                  placeholder="Lütfen açıklama giriniz..."></textarea>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+
+              <label class="text-muted">Lütfen seçim yapın</label><br>
+              <button name="confirm" type="submit" value="1" class="btn btn-success">ONAYLA</button>
+              <button name="reject" type="submit" value="0" class="btn btn-danger"> İPTAL ET</button>
+
+            </div>
+
+
+
+
+
+          </div>
+
+      </form>
+
+    </div>
+
+
+
+    <!-- /.table -->
+
+
+
+
+  </section>
+
+</div>
+
+
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg')) {
+          alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    if ($(document.activeElement).val() == 0) {
+      if ($('#note_manager').val().length < 5) {
+        alert("LÜTFEN AÇIKLAMA GİRİNİZ..!");
+        return false;
+      }
+    }
+
+   
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+
+
+  })
+</script>
+
+
+<script type="text/javascript">
+  money_check = (number) => {
+    
+    money = "#money_" + number
+    dv_ = "#dv_" + number
+    var val = parseInt($(money).val())
+    if (val > 1 ) {
+      $(dv_).show()
+    } else {
+      $(dv_).hide()
+    }
+
+  }
+</script>
+ 
+
+{% endblock %}

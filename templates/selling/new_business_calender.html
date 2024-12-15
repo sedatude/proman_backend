@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="text-muted">Yeni Çalışma Programı EKleme</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Çalışma Programı EKleme</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+
+      <div class="card-body">
+
+        <div class="col-md-12">
+          <form action="{% url 'selling_new_business_calender' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+       
+
+
+
+            <div class="row">
+              <div class="col-md-8 col-sm-8">
+                <div class="form-group">
+                  <label class="text-muted" for="note">Not</label>
+                  {% if note|length > 0 %}
+                  <textarea id="note" name="note" class="form-control"
+                    placeholder="Lütfen Not ekleyin...">{{ note }}</textarea>
+                  {% else %}
+                  <textarea id="note" name="note" class="form-control" placeholder="Lütfen Not ekleyin..."></textarea>
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+
+
+
+            <hr>
+
+            {% for i in day_list %}
+              
+                <div class="row">
+
+                  <div class="col-md-2 col-sm-2">
+                    <div class="form-group">
+                      <label class="text-muted" >{{i.0.date}} {{day_name_list.0}}</label>
+                      {% if i.0.date %}
+                      <select class="form-control select2" style="width: 100%;" id="field_{{i.0.date}}" name="field_{{i.0.date}}">
+                        <option value="0"> Şehir Seçiniz...</option>
+                        {% for field in city_list %}
+                        <option value="{{field.id}}"> {{field.name}}</option>
+                        {% endfor %}
+                      </select>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                
+                  <div class="col-md-2 col-sm-2">
+                    <div class="form-group">
+                      <label class="text-muted" >{{i.1.date}} {{day_name_list.1}}</label>
+                      {% if i.1.date %}
+                      <select class="form-control select2" style="width: 100%;" id="field_{{i.1.date}}" name="field_{{i.1.date}}">
+                        <option value="0"> Şehir Seçiniz...</option>
+                        {% for field in city_list %}
+                        <option value="{{field.id}}"> {{field.name}}</option>
+                        {% endfor %}
+                      </select>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col-md-2 col-sm-2">
+                    <div class="form-group">
+                      <label class="text-muted" >{{i.2.date}} {{day_name_list.2}}</label>
+                      {% if i.2.date %}
+                      <select class="form-control select2" style="width: 100%;" id="field_{{i.2.date}}" name="field_{{i.2.date}}">
+                        <option value="0"> Şehir Seçiniz...</option>
+                        {% for field in city_list %}
+                        <option value="{{field.id}}"> {{field.name}}</option>
+                        {% endfor %}
+                      </select>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col-md-2 col-sm-2">
+                    <div class="form-group">
+                      <label class="text-muted" >{{i.3.date}} {{day_name_list.3}}</label>
+                      {% if i.3.date %}
+                      <select class="form-control select2" style="width: 100%;" id="field_{{i.3.date}}" name="field_{{i.3.date}}">
+                        <option value="0"> Şehir Seçiniz...</option>
+                        {% for field in city_list %}
+                        <option value="{{field.id}}"> {{field.name}}</option>
+                        {% endfor %}
+                      </select>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col-md-2 col-sm-2">
+                    <div class="form-group">
+                      <label class="text-muted" >{{i.4.date}} {{day_name_list.4}}</label>
+                      {% if i.4.date %}
+                      <select class="form-control select2" style="width: 100%;" id="field_{{i.4.date}}" name="field_{{i.4.date}}">
+                        <option value="0"> Şehir Seçiniz...</option>
+                        {% for field in city_list %}
+                        <option value="{{field.id}}"> {{field.name}}</option>
+                        {% endfor %}
+                      </select>
+                      {% endif %}
+                    </div>
+                  </div>
+
+
+                </div>
+            {% endfor %}
+
+
+
+
+
+            <div class="col-md-3 col-sm-3 col-12">
+              <div class="form-group">
+                <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+              </div>
+          </form>
+
+
+        </div>
+
+
+
+
+      </div>
+    </div>
+    <!-- /.card -->
+
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script src="{% static 'plugins/multi-select/bootstrap-multiselect.min.js' %}"></script>
+<script src="{% static 'plugins/multi-select/bootstrap-multiselect.js' %}"></script>
+
+
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#example-selectAllNumber').multiselect({
+      includeSelectAllOption: true,
+      selectAllNumber: false
+    });
+  });
+</script>
+
+<script>
+  op_check = (number) => {
+
+    operation = "#operation_" + number
+    dv_ = "#dv_" + number
+    var val = parseInt($(operation).val())
+    if (val == 7 || val == 8) {
+      $(dv_).show()
+    } else {
+      $(dv_).hide()
+    }
+
+  }
+</script>
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    //    var exchages = $("#example-selectAllNumber").val()
+    //    $('#exchanges').val(exchages);
+
+
+    let field_selected = false;
+
+    for (let i = 1; i < 16; i++) {
+
+      field = "#field_" + i;
+
+      var field_val = parseInt($(field).val());
+
+      if (field_val > 0) {
+        field_selected = true
+        value1_ = "#value1_" + i
+        value2_ = "#value2_" + i
+        operation = "#operation_" + i
+        var value1_val = parseInt($(value1_).val())
+        var value2_val = parseInt($(value2_).val())
+        var op_val = parseInt($(operation).val())
+
+        if (op_val < 1) {
+          alert("Please Select an Operation type for " + i + ". Operation")
+          $(operation).focus();
+          return false;
+        }
+
+        if (value1_val < 0) {
+          alert("Please insert a value for " + i + ". value")
+          $(value1_).focus();
+          return false;
+        }
+
+        if (value2_val < 0) {
+          alert("Please insert a value for " + i + ".  second value")
+          $(value2_).focus();
+          return false;
+        }
+
+
+        if (value2_val > 0 && value1_val >= value2_val) {
+          alert("First value must be smaller then seconds value! Please change the value " + i + ".  text")
+          $(value1_).focus();
+          return false;
+        }
+
+      }
+    }
+
+
+    if (field_selected == false) {
+      alert("Please Select at least one Field...!");
+      $("#field_1").focus();
+      return false;
+    }
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+{% endblock %}

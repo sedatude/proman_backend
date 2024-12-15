@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+  <section class="content">
+
+    <div class="card">
+
+      <div class="card-header">
+        <div class="col-md-3 col-sm-3 col-12">
+          <a href="{% url 'new_material' %}" class="btn  btn-success">
+            Yeni Malzeme</a>
+        </div>
+      </div>
+   
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Malzeme Silme ve Güncelleme İşlemlerini aşağıdaki ikonlara tıklayarak gerçekleştirebilirsiniz. </h1>
+        <br>  <br>
+      </div>
+
+     
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+               
+                <th class="text-muted">No</th>
+                <th class="text-muted">İsim</th>
+                <th class="text-muted">Açıklama</th>
+                <th class="text-muted">Tür</th>
+                <th class="text-muted">Kategory</th>
+                <th class="text-muted">Ölçü Bİrimi</th>
+                <th class="text-muted">Vergi(%)</th>
+                <th class="text-muted">İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mat in material_list %}
+              <tr>
+                <td>{{mat.id}}</td>
+                <td>{{mat.name}}</td>
+                <td>{{mat.description}}</td>
+                
+                <td>{{mat.type__name}}</td>
+                <td>{{mat.usage_type__name}}</td>
+                <td>{{mat.measurement_type__name}}</td>
+                <td>{{mat.vat}}</td>
+                
+                  <td>
+                    <ul class="list-inline m-0">
+                    
+                      <li class="list-inline-item">
+                        <a href="{% url 'edit_material' mat.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                          <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-danger_{{ mat.id }}" title="Sil"><i class="fa fa-trash"></i></button>
+                      </li>
+                  </ul>
+                    
+                  </td>
+
+                <div class="modal fade" id="modal-danger_{{ mat.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-danger">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{mat.name}} Kaydı Silinecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url 'delete_material' %}" method='post'>
+                          {% csrf_token %}
+                          <input type="hidden" name="object_id" value="{{ mat.id }}">
+                          <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+              </tr>
+                {% endfor %}
+             
+            </tbody>
+
+          </table>
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+
+
+</script>
+
+
+<script type="text/javascript">
+  $('form').on('submit', function ( ) {
+  
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'LÜTFEN BEKLEYİNİZ...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+
+
+
+{% endblock %}

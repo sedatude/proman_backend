@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+  {% if my_demand_list %}
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Onayınız Bekleyen Kayıtlar </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">İşlem</th>
+              <th class="text-muted">Yüklenme Tarihi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for demand in my_demand_list %}
+
+            <tr>
+              <td><a href="{% url 'pending' demand.demand_id %}"><button type="button" class="btn btn-outline-warning">Seçim Yap</button></a></td>
+              <td>{{demand.date_start|date:"Y-m-d H:i:s"}}</td>
+            </tr>
+
+         
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  </section>
+  {% endif %}
+
+
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Son Kayıtlar </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">PO No</th>
+              <th class="text-muted">Tarih</th>
+              <th class="text-muted">Açıklama</th>
+              <th class="text-muted">Firma 1</th>
+              <th class="text-muted">Firma 2</th>
+              <th class="text-muted">Firma 3</th>
+              <th class="text-muted">İstek Sahibi</th>
+              <th class="text-muted">Durum</th>
+             
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for demand in demand_list %}
+
+            <tr>
+              <td><a href="{% url 'details' demand.id %}">{{demand.number}}</a></td>
+              <td>{{demand.date_start|date:"Y-m-d H:i:s"}}</td>
+              <td>{{demand.note}}</td>
+              {% if demand.selected_company == 1 %} <td class="text-success">{%else %} <td class="text-danger"> {% endif %}
+
+                {{demand.company_1}} {{demand.price_1}} {{demand.money_1__short}} 
+                {% if demand.money_1__short != 'TRY' %}
+                ({{demand.price_1_tr}} TRY)
+                {% endif %}
+              </td>
+              {% if demand.price_2 > 0 %}
+                {% if demand.selected_company == 2 %} <td class="text-success">{%else %} <td class="text-danger"> {% endif %}
+                    {{demand.company_2}} {{demand.price_2}} {{demand.money_2__short}}
+                    {% if demand.money_2__short != 'TRY' %}
+                    ({{demand.price_2_tr}} TRY)
+                    {% endif %}
+                  </td>
+              {%else %}
+              <td class="text-danger">**** </td>
+              {% endif %}
+
+              {% if demand.price_3 > 0 %}
+                {% if demand.selected_company == 3 %} <td class="text-success">{%else %} <td class="text-danger"> {% endif %}
+              {{demand.company_3}} {{demand.price_3}} {{demand.money_3__short}}
+              {% if demand.money_3__short != 'TRY' %}
+              ({{demand.price_3_tr}} TRY)
+              {% endif %}
+            </td>
+              {%else %}
+              <td class="text-danger">**** </td>
+              {% endif %}
+              <td>{{demand.user__email }} </td>
+              
+              <td>
+                <a href="{% url 'details' demand.id %}">
+                  {% if demand.status == 2 %}
+                  <button type="button" class="btn btn-outline-warning">Beklemede</button>
+                  {% elif demand.status == 3 %}
+                  <button type="button" class="btn btn-outline-success">Onaylandı</button>
+                  {% else %}
+                  <button type="button" class="btn btn-outline-danger">Onaylanmadı</button>
+                  {% endif %}
+                </a>
+              </td>
+
+         
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+  <!-- /.table -->
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+
+
+
+<script>
+  $(function () {
+
+
+
+    $("#example1").DataTable(
+      {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "bPaginate": false,
+        "ordering": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+
+  });
+</script>
+
+
+
+
+{% endblock %}

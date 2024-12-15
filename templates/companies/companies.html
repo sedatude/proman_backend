@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title text-muted"> SATIŞ YAPAN FİRMALAR </h1>
+        <br><br>
+       
+      </div>
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                 
+                <th class="text-muted">Bölge Sorumlusu</th>
+                <th class="text-muted">İsim</th>
+                <th class="text-muted">Tam İsim</th>
+                <th class="text-muted">Adres</th>
+                <th class="text-muted">Telefon</th>
+                <th class="text-muted">E-mail</th>
+                <th class="text-muted">Vergi Dairesi / Numarası</th>
+                
+                <th class="text-muted">Hesap Bilgileri</th>
+              
+               
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for company in company_list %}
+
+              <tr>
+                <td>{{company.region_manager_name}}</td>
+                <!-- <td>{{company.date_start|date:"Y-m-d H:i:s"}}</td> -->
+                <td>{{company.name}}</td>
+                <td>{{company.full_name}}</td>
+                <td>{{company.address}}</td>
+                <td>{{company.phone}}</td>
+                <td>{{company.email}}</td>
+                <td>{{company.tax_place}} / {{company.tax_number}}</td>
+                <td>{{company.account}}</td>
+             
+              
+                <!-- <td>{{company.user__first_name}}</td> -->
+                
+              
+
+             
+
+                {% endfor %}
+
+            </tbody>
+
+          </table>
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+
+<script>
+$(function () {
+
+var example1_length = 30
+$("#example1").DataTable({
+  "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true,
+  "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+$('#example2').DataTable({
+  "bPaginate": true,
+  "lengthChange": true,
+  "searching": true,
+  "ordering": true,
+  "info": false,
+  "autoWidth": true,
+  "responsive": true,
+  
+});
+
+
+});
+
+$('form').on('submit', function(){
+
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+ 
+  
+ $("body").loading({
+     stoppable: false,
+     message: "LÜTFEN BEKLEYİNİZ...",
+     theme: "dark"
+   });
+})
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+{% endblock %}

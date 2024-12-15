@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      
+      <!-- /.card-header -->
+      {% if product_list|length %}
+      <div class="card-header">
+        <h1 class="card-title text-success"> Kargo Bekleyen Şirketler ve Ürün <b>Koli</b> Bilgileri Listelenmiştir. </h1>
+      </div>
+      <form action="{% url 'logistic_add_shipment' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}  
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              
+              <tr>
+                <th class="text-muted">No</th>
+                <th class="text-muted">Şirket Adı</th>
+                <th class="text-muted">Lokasyon</th>
+                <th class="text-muted">Ürün Adı</th>
+                <th class="text-muted">Toplam Palet</th>
+                <th class="text-muted">Gönderilen Palet</th>
+                <th class="text-muted">Stok Palet</th>
+                <th class="text-muted">Gönderilecek Palet</th>
+                <th class="text-muted">Tarih</th>
+                <th class="text-muted">İşlem</th>
+               
+                {% comment %} <th class="text-muted">Not</th>
+                <th class="text-muted">Durum</th>
+                <th class="text-muted">İşlem</th> {% endcomment %}
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for object in product_list %}
+              {% if object.is_sendable %}
+              <tr class="text-success">
+              {%else%}
+              <tr class="text-warning">
+              {%endif%}
+                {% comment %} <td>
+                <a href="{% url 'production_details' object.production_id %}">
+                  {{object.product__name}}
+                </a>
+                 <input type="hidden" name="company_{{object.company_details_id}}" value="{{object.company_details_id}}">
+                </td> {% endcomment %}
+                <td>{{object.company_details_id}}</td>
+                <td>{{object.company_details__company__name}}</td>
+                <td>{{object.company_details__company__city__name}}</td>
+                <td> {{object.product__name}}({{object.product__palette_package_quantity}}K {{object.product__palette_quantity}}A)</td>
+                <td>{{object.quantity|floatformat:0}}</td>
+                
+                <td>{{object.sent_quantity|floatformat:0}} </td>
+                <td>{{object.total_stock_package|floatformat:0}}</td>
+                {% if object.is_sendable %}
+                
+                <td><input type="number" class="form-control text-success" id="id_{{object.id}}" name="id_{{object.id}}" value="0"
+                inputmode="numeric" pattern="\d*" step="1" min="0" max="{{object.remaining_quantity}} "
+                onchange="calculateTotal({{object.id}},{{object.quantity}},{{object.sent_quantity}},{{object.total_stock_package}})" required></td>
+                {% else %}
+                  <td><button type="button" class="btn btn-outline-warning" disabled>Üretim Bekleniyor</button></td>
+                {% endif %}
+                <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                <td> <a href="{% url 'logistic_selling_update' object.company_details_id %}"><button type="button" class="btn btn-outline-success">Güncelle</button></a></td>
+                
+               
+                {% comment %} <td>{{object.note}}</td>
+                <td>{{object.material__name}}</td>
+                
+                <td>
+                  
+                  <a href="#">
+                  <button type="button" class="btn btn-outline-success">Güncelle</button>
+                  </a>
+                </td> 
+                {% endcomment %}
+              
+
+                {% endfor %}
+              </tr>
+            </tbody>
+
+          </table>
+          <br>
+          
+          <div class="row">
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">Telefon No</label>
+                <input type="text" id="phone_number" name="phone_number" class="form-control" cols="40" value="{{cargo_info.phone_number}}">
+
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">Plaka No</label>
+                <input type="text" id="vehicle" name="vehicle" class="form-control" cols="40" value="{{cargo_info.vehicle}}">
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">İrsaliye No</label>
+                <input type="text" id="despatch_number" name="despatch_number" class="form-control" cols="40" value="{{cargo_info.despatch_number}}">
+
+              </div>
+            </div>
+           
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">1. İrsaliye</label>
+                {% if cargo_info.photo_1 %}
+                <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_1}}" target="_blank">Tıklayın</a>
+                {% else %}
+                <input type="file" name="photo_1" id="photo_1" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_1')" />
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">2. İrsaliye</label>
+                {% if cargo_info.photo_2 %}
+                <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_2}}" target="_blank">Tıklayın</a>
+                {% else %}
+                <input type="file" name="photo_2" id="photo_2" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_2')" />
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-12">
+              <div class="form-group">
+                <label class="text-muted">3. İrsaliye</label>
+                {% if cargo_info.photo_3 %}
+                <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_3}}" target="_blank">Tıklayın</a>
+                {% else %}
+                <input type="file" name="photo_3" id="photo_3" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_3')" />
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-sm-8 col-12">
+              <div class="form-group">
+                <label class="text-muted">Açıklama</label>
+                {% if cargo_info.note|length > 0 %}
+                <textarea id="note" name="note" class="form-control"
+                  placeholder="Lütfen açıklama giriniz...">{{ cargo_info.note }}</textarea>
+                {% else %}
+                <textarea id="note" name="note" class="form-control"
+                  placeholder="Lütfen açıklama giriniz..."></textarea>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-2 col-sm-2 col-12">
+              <button name="submit" type="submit" class="btn btn-success">Kargo Hazırla</button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+      {%else%}
+      <div class="card-header">
+        <h1 class="card-title text-success"> Bekleyen Sipariş kaydı yoktur. </h1>
+      </div>
+
+      {%endif%}
+      <!-- /.card-body -->
+    </div>
+
+  </section>
+
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock %}
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg')) {
+          alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+<script>
+  calculateTotal = (id,quantity,sent_quantity,stock_quantity) => {
+
+    const quantityInput = $("#id_" + id);
+    const ordered_quantity = Number(quantityInput.val());
+    
+    let max_quantity = quantity - sent_quantity
+    if (ordered_quantity > max_quantity) {
+      alert("En fazla "+max_quantity+" koli ürün gönderebilirsiniz.")
+      quantityInput.focus()
+    }
+    else if (ordered_quantity > stock_quantity) {
+      alert("Girilen miktar stoktaki koli adedinden fazla, "+stock_quantity+" stok koli ürün gönderebilirsiniz.")
+      quantityInput.focus()
+    }
+
+  }
+</script>
+
+<script>
+  $(function () {
+   
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 25,  "order": [[0, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+  });
+</script>
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    let total = 0; // initialize a variable to hold the total sum
+
+    // select all the input fields that have name attribute starting with "id_"
+    let inputs = document.querySelectorAll('input[name^="id_"]');
+
+    // loop through each input field and add its value to the total sum
+    inputs.forEach(input => {
+      total += parseInt(input.value);
+    });
+
+    if (total == 0) {
+      alert("Lütfen En az bir tane Ürün alım bilgisi giriniz...");
+     
+      return false;
+    }
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+
+{% endblock %}

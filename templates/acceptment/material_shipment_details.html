@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+      
+     
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Depoda bulunan Malzemelerin Son Kayıtları  </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">İrsaliye No</th>
+              <th class="text-muted">Tarih</th>
+              <th class="text-muted">Gönderen Firma</th>
+              <th class="text-muted">Genel Not</th>
+              <th class="text-muted">Malzeme Adı</th>
+              <th class="text-muted">Adet/Miktar</th>
+              <th class="text-muted">Peşin Fiyat</th>
+              <th class="text-muted">Vadeli Fiyat</th>
+              <th class="text-muted">Kur</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for object in stock_list %}
+
+            <tr>
+              <td>
+              <a href="{% url 'incoming_shipment_details' object.shipment_id %}">
+                {{object.shipment__despatch_number}}
+              </a>
+              </td>
+              <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+              <td>{{object.shipment__company__name}}</td>
+              <td>{{object.shipment__note}}</td>
+              <td>{{object.material__name}}</td>
+              <td>{{object.quantity}}</td>
+              <td>{{object.price}} {{object.money_id__short}} </td>
+              <td>{{object.price_future}} {{object.money_id__short}} </td>
+              <td>{{object.money_rate_price}} {{object.money_id__short}}</td>
+               
+            
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+  $(function () {
+
+
+
+    $("#example1").DataTable(
+      {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "bPaginate": true,
+        "ordering": true,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+
+  });
+</script>
+
+
+
+
+{% endblock %}

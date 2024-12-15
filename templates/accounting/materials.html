@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        {% comment %} <h1 class="card-title text-success"> ONAY LİSTESİ :
+          {% for user in user_list %}
+           {{user}}@borline.com.tr 
+          {% endfor %}
+          </h1>
+          <br> {% endcomment %}
+          <h1 class="card-title text-success"> Alınan <b>Malzemeler</b> ile ilgili Bilgler Listelenmiştir.</h1>
+          <br>
+          <h1 class="card-title text-warning"> Ödeme Bilgileri Girmek için lütfen işlem segmesindeki Ödeme Ekle butonuna tıklayınız. </h1>
+          <br>
+          <h1 class="card-title text-warning"> Ödeme Detayları için lütfen Numara üzerine tıklayınız. </h1>
+          <br>
+        {% comment %} <h1 class="card-title text-warning"> Sipariş detayları için lütfen firma adına tıklayınız.</h1> {% endcomment %}
+      </div>
+      <!-- /.card-header -->
+      {% if buying_list %}
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+              
+                <th class="text-muted">No</th>
+                <th class="text-muted">Şirket Adı</th>
+                <th class="text-muted">Toplam</th>
+                <th class="text-muted">Ödenen</th>
+                <th class="text-muted">Kalan</th>
+                <th class="text-muted">Tarih</th>
+                <th class="text-muted">İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              {% for object in buying_list %}
+              {% if object.is_active %}
+              <tr class="text-warning">
+              {%else%}
+              <tr class="text-success">
+              {%endif%}
+                <td><a href="{% url 'accounting_material_details' object.id %}">{{object.id}}</a></td>
+                <td>{{object.shipment__company__name}}</td>
+                <td>{{object.total_price}}</td>
+                <td>{{object.total_paid}}</td>
+                <td>{{object.debt}}</td>
+                {% if object.updated_at %}
+                <td>{{object.created_at|date:"Y-m-d H:i"}}-{{object.updated_at|date:"Y-m-d H:i"}}</td>
+                {% else %}
+                <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                {% endif %}
+                <td><ul class="list-inline m-0">
+                  {% if object.is_active %}
+                      {% comment %} <li class="list-inline-item">
+                          <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-warning_{{ object.id }}" title="Onayla"><i class="fa fa-check"></i></button>
+                      </li> {% endcomment %}
+                      <li class="list-inline-item">
+                        <a href="{% url 'accounting_material_update' object.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button"  data-toggle="tooltip" data-placement="top" title="Ödeme Ekle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                          <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-danger_{{ object.id }}" title="İade Talebi Yap"><i class="fa fa-trash"></i></button>
+                      </li>
+                  {% else %}
+                    <li class="list-inline-item">
+                      <button class="btn btn-success " type="button" class="btn btn-primary" title="İşlem Yapılamaz">Borç Yok</button>
+                    </li>
+                   
+                  {% endif %}
+                </ul></td>
+                <div class="modal fade" id="modal-danger_{{ object.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-danger">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ? Kayıt No:{{object.id}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p> No:{{object.id}} ile eşleşen bütün siparişler iptal edilecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url 'revenue_cancel' %}" method='post'>
+                          {% csrf_token %}
+                          <input type="hidden" name="object_id" value="{{ object.id }}">
+                          <input type="hidden" name="company_details_id" value="{{ object.id }}">
+                          <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+                <div class="modal fade" id="modal-warning_{{ object.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-success">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ?  Sipariş No:{{object.id}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <onspan aria-hidden="true">&times;</onspan>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>No:{{object.id}} Üretim ve Kargolama için ilgili birimlere bildirilecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url  'confirm_selling_order' %}" method='post' enctype="multipart/form-data">
+                          {% csrf_token %}
+                        
+                          <input type="hidden" name="object_id" value="{{ object.id }}">
+                            <!-- <input type="hidden" name="rate_str" value="{{ rate_str }}">
+                            <input type="hidden" name="mail_list" value="{{ user_list }}"> -->
+                          <button type="submit" value="yes" class="btn btn-outline-light"  onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light"  data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+                {% endfor %}
+
+            </tbody>
+
+          </table>
+
+          <div class="row">
+            <div class="col-md-4 col-sm-4 col-12"><span class="text-sm badge bg-success">Ödeme Tamamlandı</span> </div>
+            <div div class="col-md-4 col-sm-4 col-12"><span class="text-sm badge bg-warning">Ödeme Bekleniyor</span> </div>
+          </div>
+        </div>
+     
+        {% else %}  
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Onay Bekleyen Sipariş bulunamadı. </h1>
+        <br><br>
+        <a href="{% url 'new_selling_order' %}">  <button class="btn btn-sm btn-outline-success">Yeni Sipariş Ekle</button></a>          
+      </div>
+      {% endif %}
+      <!-- /.card-body -->
+    </div>
+
+  </section>
+
+
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock %}
+
+{% block javascript%}
+
+
+<script>
+  $(function () {
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": false, "iDisplayLength": 25,  "order": [[0, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+
+
+</script>
+
+
+{% endblock %}

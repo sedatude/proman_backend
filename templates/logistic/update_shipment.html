@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="text-muted">Kargo Bilgileri Görüntüleme ve Güncelleme</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Kargo Detayları</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Default box -->
+      <div class="card">
+
+        <div class="card-body">
+
+          <div class="col-sm-12 col-md-12 col-12">
+            <form action="{% url 'logistic_update_shipment' cargo_info.id %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+
+
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Telefon No</label>
+                    <input type="text" id="phone_number" name="phone_number" class="form-control" cols="40" value="{{cargo_info.phone_number}}">
+
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Plaka No</label>
+                    <input type="text" id="vehicle" name="vehicle" class="form-control" cols="40" value="{{cargo_info.vehicle}}">
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">İrsaliye No</label>
+                    <input type="text" id="despatch_number" name="despatch_number" class="form-control" cols="40" value="{{cargo_info.despatch_number}}">
+
+                  </div>
+                </div>
+               
+              </div>
+
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">1. İrsaliye</label>
+                    {% if cargo_info.photo_1 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_1}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_1" id="photo_1" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_1')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">2. İrsaliye</label>
+                    {% if cargo_info.photo_2 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_2}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_2" id="photo_2" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_2')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">3. İrsaliye</label>
+                    {% if cargo_info.photo_3 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_3}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_3" id="photo_3" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('photo_3')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+
+
+
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">1. Fatura</label>
+                    {% if cargo_info.invoice_1 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_1}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_1" id="invoice_1" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('invoice_1')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">2. Fatura</label>
+                    {% if cargo_info.invoice_2 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_2}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_2" id="invoice_2" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('invoice_2')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">3. Fatura</label>
+                    {% if cargo_info.invoice_3 %}
+                    <a  class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_3}}" target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_3" id="invoice_3" class="form-control" accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('invoice_3')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-md-8 col-sm-8 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Açıklama</label>
+                    {% if cargo_info.note|length > 0 %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz...">{{ cargo_info.note }}</textarea>
+                    {% else %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz..."></textarea>
+                    {% endif %}
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                  <button name="submit" type="submit" class="btn btn-primary">Güncelle</button>
+                </div>
+              </div>
+              
+
+            </form>
+
+
+            <hr>
+
+            <div class="row">
+
+              <label class="text-success">Kargo Detayları</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Şirket</th>
+                    <th class="text-muted">Lokasyon</th>
+                    <th class="text-muted">Malzeme Adı</th>
+                    <th class="text-muted">Palet</th>
+                    <th class="text-muted">Sipariş-Teslim Tarihi</th>
+                    <th class="text-muted">Durum</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in cargo_details_list %}
+                  <tr>
+                    <td>{{object.company__name}}</td>
+                    <td>{{object.company__city__name}}</td>
+                    <td>{{object.product_details__product__name}}</td>
+                    <td>{{object.quantity}}</td>
+                    {% if object.finished_at %}
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}-{{object.finished_at|date:"Y-m-d H:i"}}</td>
+                    {% else %}
+                    <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                    {% endif %}
+                    {% if object.is_delivered %}
+                    <td>Teslim Edildi</td>
+                    {% else %}
+                    <td>Dağıtıma Çıktı</td>
+                    {% endif %}
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+
+
+
+
+
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg')) {
+          alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    if ($('#phone_number').val().length < 5) {
+      alert("LÜTFEN TELEFON NO GİRİNİZ..!");
+      $('#phone_number').focus();
+      return false;
+    }
+
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+
+
+  })
+</script>
+
+{% endblock %}

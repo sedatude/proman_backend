@@ -1,0 +1,17 @@
+{% autoescape off %}
+
+Merhaba Sayın Yetkili,
+
+{{material_order.order.user.first_name}} {{material_order.order.user.last_name}} tarafından {{material_order.order.created_at|date:"Y-m-d H:i:s"}} tarihinde oluşturulan {{material_order.material.name}} malzeme tedariği firma seçimi {{sender.first_name}} {{sender.last_name}} tarafından iptal edildi.
+
+
+Detaylar için aşağıdaki bağlantı adresine tıklayabilirsiniz.
+http://{{current_site}}
+
+İyi Çalışmalar.
+
+
+Bu iletinin ve varsa eklerinin içerdiği bilgiler gizlidir ve gönderildiği belirtilen kişi(ler) ve/veya kurum(lar)a özeldir. İlgili kişi değilseniz, bu iletideki bilgileri yaymamalı, çoğaltmamalı veya başka şekillerde kullanmamalısınız. Bu iletinin yanlışlıkla tarafınıza ulaşmış olması veya iletinin gönderilmek istendiği kişinin siz olmamanız halinde, iletinin içeriğinin gizliliği ve bu gizlilik yükümlülüğüne uyulması zorunluluğu tarafınız için de söz konusudur. Bu iletiyi yanlışlıkla aldıysanız veya iletinin gönderilmek istendiği kişi siz değilseniz, lütfen göndereni hemen uyarınız ve bu iletiyi tüm kopyalarıyla birlikte derhal siliniz. Gönderenin bu iletinin ve varsa eklerinin içeriği, içeriğinin doğruluğu ve güncelliği hakkında hiçbir sorumluluğu bulunmamaktadır. Gönderen, ileti içeriği ve/veya eklerinden kaynaklanabilecek olan herhangi bir zarardan dolayı hiçbir sorumluluk kabul etmemektedir. Bu iletinin içeriği yazarı tarafından oluşturulmuş olup Borline'ın görüşlerini yansıtmayabilir.
+
+
+{% endautoescape %}

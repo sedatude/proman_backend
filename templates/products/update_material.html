@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+
+
+  <section class="content-header">
+    
+    <form action="{% url 'save_materials'%}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      
+
+      <div class="col-sm-3">
+        <div class="form-group">
+          <input type="hidden" name="material_list" value="{{ material_list }}">
+          <button name="submit" type="submit" class="btn btn-primary">Yüklenen kayıtları Güncelle!</button>
+      </div>
+    
+    </div>
+  </form>
+  </section>
+
+  
+  
+  <!-- /.content -->
+
+  
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Yüklenen Son Kayıtlar </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">No</th>
+              <th class="text-muted">İsim</th>
+              <th class="text-muted">Marka</th>
+              <th class="text-muted">Model</th>
+              <th class="text-muted">Ölçü</th>
+              <th class="text-muted">Bölge</th>
+              <th class="text-muted">Seri No</th>
+             
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for met in material_list %}
+
+            <tr>
+              <td>{{met.number}}</td>
+              <td>{{met.name}}</td>
+              <td>{{met.brand}}</td>
+              <td>{{met.model}}</td>
+              <td>{{met.meter}}</td>
+              <td>{{met.area}}</td>
+              <td>{{met.serial_no}}</td>
+            </tr>
+
+         
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+        
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+ 
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+   
+  
+
+{% endblock %}

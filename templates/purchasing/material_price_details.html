@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-muted">Malzeme Satın Alma Detayları</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+                        <li class="breadcrumb-item active">Satın Alma</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Default box -->
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="col-sm-12 col-md-12">
+
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                    <label class="text-muted">Satın Alma Uzmanı</label>
+                                    <input type="text" value="{{material_order.order.user.email}}" class="form-control" cols="40" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                    <label class="text-muted">Giriş Tarih</label>
+                                    <input type="text" value="{{material_order.order.created_at|date:"Y-m-d H:i"}}"
+                                        class="form-control" cols="40" disabled>
+
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                    <label class="text-muted">Durum</label>
+                                    <input type="text" value="{{material_order.status.name}}"
+                                        class="form-control" cols="40" disabled>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Açıklama</label>
+                                    <textarea id="note" name="note" class="form-control"
+                                        disabled>{{ material_order.note }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {%if order.is_selected%}
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Yönetici Notu</label>
+                                    <textarea id="note" name="note" class="form-control"
+                                        disabled>{{ material_order.manager_note }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {%endif%}
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Malzeme Adı</label>
+                                    <input type="text" value="{{material_order.material.name}}(KDV:{{material_order.material.vat}})" class="form-control" cols="40" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Miktar</label>
+                                    <input type="text" value="{{material_order.quantity}} {{material_order.material.measurement_type.name}}"
+                                        class="form-control" cols="40" disabled>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                </div>
+                <hr>
+
+                <div >
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                            
+                                <th class="text-muted">Firma</th>
+                                <th class="text-muted">Birim Fiyat</th>
+                                <th class="text-muted">KDV Tutarı</th>
+                                <th class="text-muted">Mal Hizmet Tutarı</th>
+                                <th class="text-muted">Toplam</th>
+                                <th class="text-muted">Ödeme Not</th>
+                                <th class="text-muted">Genel Not</th>
+                                <th class="text-muted">Dosya</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for material in price_list %}
+                                {% if material_order.status_id == 6 %}
+                                <tr class="text-success">
+                                {% elif material_order.status_id == 7 %}
+                                <tr class="text-danger">
+                                {%else%}
+                                <tr class="text-warning">
+                                {%endif%} 
+                                <td>{{material.company__name}}</td>
+                                <td>{{material.price}} {{material.money__short}} </td>
+                                <td>{{material.vat_total}} {{material.money__short}} </td>
+                                <td>{{material.price_total}} {{material.money__short}} </td>
+                                <td>{{material.amount}} {{material.money__short}} </td>
+                                <td>{{material.paying_note}} </td>
+                                <td>{{material.note}} </td>
+                                <td>
+                                    {% if material.info_file %}
+                                    <a class="btn btn-block btn-outline-success" href="../../../media/{{material.info_file}}"
+                                      target="_blank">Tıklayın</a>
+                                    {% else %}
+                                    <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                                    {% endif %}
+                                </td>
+                                
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-3"><span class="text-sm badge bg-success">Onaylanan Firma</span> </div>
+                    <div div class="col-sm-3"><span class="text-sm badge bg-warning">Onaylanmayan Firma</span> </div>
+                    <div div class="col-sm-3"><span class="text-sm badge bg-danger">Sipariş İptal</span> </div>
+                </div>
+
+            </div>
+            <!-- /.card -->
+            
+        </div>
+    </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+<script>
+    $(function () {
+
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": false, // disable length change menu
+            "searching": false, // disable search field
+            "autoWidth": false,
+            "paging": false, // disable pagination
+            "info": false, // disable the "Showing x to y of z entries" message
+            "order": [
+                [0, "desc"]
+            ],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    });
+</script>
+
+
+
+{% endblock %}

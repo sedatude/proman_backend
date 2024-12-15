@@ -1,0 +1,36 @@
+{% autoescape off %}
+
+Merhaba {{user.first_name}} {{user.last_name}},
+
+{{sender.first_name}} {{sender.last_name}}  {{demand.company.name}} için {{demand.date_start|date:"Y-m-d H:i:s"}} tarihinde sistemde yeni bir alım isteği oluşturdu.
+Kullanıcı tarafından önerilen firma {{demand.selected_company}}. Firmadır.
+Firma(ların) verdiği fiyatlar aşağıda yer almaktadır. Detayları web sitesi üzerinden kontrol edebilirsiniz.
+
+Açıklama                :   {{demand.note}}
+{% if demand.price_1 > 0 %}
+1. Firma                :   {{demand.company_1}} {{demand.price_1}} {{demand.money_1.short}} {% if demand.money_1.short != 'TRY' %}({{demand.price_1_tr}} TRY) {% endif %}
+{% endif %}
+{% if demand.price_2 > 0 %}
+2. Firma                :   {{demand.company_2}} {{demand.price_2}} {{demand.money_2.short}} {% if demand.money_2.short != 'TRY' %}({{demand.price_2_tr}} TRY) {% endif %}
+{% endif %}
+{% if demand.price_3 > 0 %}
+3. Firma                :   {{demand.company_3}} {{demand.price_3}} {{demand.money_3.short}} {% if demand.money_3.short != 'TRY' %}({{demand.price_3_tr}} TRY) {% endif %}
+{% endif %}
+{% if rate_str|length > 3 %}
+TRY Kur fiyatları       :   {{rate_str}}
+Kur fiyatları sistemde kayıtlı son verilerden alınmıştır, ödeme sırasında fiyat farkı olabilir.
+{% endif %}
+
+{% if send_confirmation_link %}
+Onaylamak yada iptal etmek için lütfen aşağıdaki bağlantıya tıklayınız.
+http://{{domain}}{% url 'confirmation' uidb64=uid didb64=did token=token %}
+{% endif %}
+
+İyi Çalışmalar.
+
+
+
+Bu iletinin ve varsa eklerinin içerdiği bilgiler gizlidir ve gönderildiği belirtilen kişi(ler) ve/veya kurum(lar)a özeldir. İlgili kişi değilseniz, bu iletideki bilgileri yaymamalı, çoğaltmamalı veya başka şekillerde kullanmamalısınız. Bu iletinin yanlışlıkla tarafınıza ulaşmış olması veya iletinin gönderilmek istendiği kişinin siz olmamanız halinde, iletinin içeriğinin gizliliği ve bu gizlilik yükümlülüğüne uyulması zorunluluğu tarafınız için de söz konusudur. Bu iletiyi yanlışlıkla aldıysanız veya iletinin gönderilmek istendiği kişi siz değilseniz, lütfen göndereni hemen uyarınız ve bu iletiyi tüm kopyalarıyla birlikte derhal siliniz. Gönderenin bu iletinin ve varsa eklerinin içeriği, içeriğinin doğruluğu ve güncelliği hakkında hiçbir sorumluluğu bulunmamaktadır. Gönderen, ileti içeriği ve/veya eklerinden kaynaklanabilecek olan herhangi bir zarardan dolayı hiçbir sorumluluk kabul etmemektedir. Bu iletinin içeriği yazarı tarafından oluşturulmuş olup ITS Bilişim ve Enerji'nin görüşlerini yansıtmayabilir.
+
+
+{% endautoescape %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Bir Palet Ürün için  Malzeme Ürün Fiyat Detayları </h1>
+      </div> 
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">No</th>
+              <th class="text-muted">Ürün Adı</th>
+           
+              <th class="text-muted">Adet</th>
+              <th class="text-muted">Maliyet(TRY)</th>
+              <th class="text-muted">Satış(TRY)</th>
+              {% comment %} <th class="text-muted">Kar</th> {% endcomment%}
+              <th class="text-muted">Malzeme Sayısı</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in product_list %}
+
+            <tr>
+              <td>
+                <a href="{% url 'product_materials' product.id %}">{{product.code}}</a>
+              </td>
+              <td>{{product.name}}</td>
+              
+              <td>{{product.palette_quantity|floatformat:0}}</td>
+              <td>{{product.price_material|floatformat:2 }}</td>
+              <td>{{product.price|floatformat:2 }}</td>
+              {% comment %} <td>{{product.profit|floatformat:2 }}</td> {% endcomment %}
+              <td>{{product.material_counter}}</td>
+            </tr>
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+   <div class="col-md-3 col-sm-3 col-12">
+      <div class="form-group">
+        <a id="link" href="../../../{{file_name}}" target="_blank" >
+          
+        <button name="submit" type="submit" class="btn btn-success">Detaylı Excel İndir</button>
+        </a>
+        <br>
+    </div> 
+
+  </section>
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+<script>
+  $(function () {
+
+  
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 25,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+ 
+
+  
+  });
+</script>
+
+
+
+ 
+
+
+
+
+
+
+{% endblock %}

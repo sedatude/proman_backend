@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="card-header text-muted">Malzeme Ödeme No:{{buying.id}}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Malzeme Ödeme Detayları</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Default box -->
+      <div class="card">
+
+        <div class="card-body">
+
+          <div class="col-sm-12 col-md-12 col-12">
+            <div class="row">
+              <div class="col-md-8 col-sm-8 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Şirket Adı</label>
+                  <input type="text" class="form-control" cols="40" value="{{buying.shipment.company.name}}"
+                    disabled>
+
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Giriş Tarihi</label>
+                  <input type="text" id="total_price" name="total_price" class="form-control" cols="40"
+                    value="{{buying.shipment.created_at|date:"Y-m-d H:i"}}" disabled>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Alacak(₺)</label>
+                  <input type="text" id="total_price" name="total_price" class="form-control" cols="40"
+                    value="{{buying.total_price}}" disabled>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Ödenen(₺)</label>
+                  <input type="text" id="total_paid" name="total_paid" class="form-control" cols="40"
+                    value="{{buying.total_paid}}" disabled>
+
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Kalan(₺)</label>
+                  <input type="text" id="debt" name="debt" class="form-control" cols="40" value="{{buying.debt}}"
+                    disabled>
+
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">1. İrsaliye</label>
+                  {% if buying.shipment.photo_1 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.photo_1}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">2. İrsaliye</label>
+                  {% if buying.shipment.photo_2 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.photo_2}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">3. İrsaliye</label>
+                  {% if buying.shipment.photo_3 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.photo_3}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">1. Fatura</label>
+                  {% if buying.shipment.invoice_1 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.invoice_1}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">2. Fatura</label>
+                  {% if buying.shipment.invoice_2 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.invoice_2}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">3. Fatura</label>
+                  {% if buying.shipment.invoice_3 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{buying.shipment.invoice_3}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+
+            </div>
+
+            <br>
+
+            <div>
+              <label class="text-success">Ödeme Geçmişi</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Sipariş Tarihi</th>
+                    <th class="text-muted">Ödenen</th>
+                    <th class="text-muted">Kalan</th>
+                    <th class="text-muted">Ödeme Tarihi</th>
+                    <th class="text-muted">Dekont</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in history %}
+                  <tr class="text-success">
+                    <td>{{buying.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>{{object.total_paid}}</td>
+                    <td>{{object.debt}}</td>
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>
+                      {% if object.invoice_1 %}
+                      <a class="btn btn-block btn-outline-success" href="../../../media/{{object.invoice_1}}"
+                        target="_blank">Tıklayın</a>
+                      {% else %}
+                      <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <br>
+            <div>
+
+              <label class="text-success">Sipariş Toplam:{{price_total}}₺ KDV Toplam:{{price_total_vat}}₺  Genel Toplam:{{buying.total_price}}₺</label>
+              <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Stok-No</th>
+                    <th class="text-muted">Malzeme</th>
+                    <th class="text-muted">Miktar </th>
+                    <th class="text-muted">Birim Fiyat(₺)</th>
+                    <th class="text-muted">KDV Oranı</th>
+                    <th class="text-muted">KDV Tutarı(₺)</th>
+                    <th class="text-muted">Mal Hizmet Tutarı(₺)</th>
+                    <th class="text-muted">Toplam(₺)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in material_list %}
+                  <tr class="text-success">
+                    <td>{{object.id}}</td>
+                    <td>{{object.material__name}}</td>
+                    <td>{{object.quantity}} {{object.material__measurement_type__name}}</td>
+                    <td>{{object.price_try}}</td>
+                    <td>{{object.vat}}</td>
+                    <td>{{object.total_vat}}</td>
+                    <td>{{object.price_total}}</td>
+                    <td>{{object.amount}}</td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+
+
+
+
+
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+
+
+<script>
+  $(function () {
+
+    $("#example1,#example2").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "bPaginate": false,
+      "iDisplayLength": 25,
+      "order": [
+        [0, "desc"]
+      ],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0), #example2_wrapper .col-md-6:eq(0)');
+
+  });
+</script>
+
+
+
+{% endblock %}

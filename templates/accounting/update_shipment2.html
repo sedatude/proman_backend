@@ -1,0 +1,442 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="card-header text-muted">Ödeme No:{{cargo_info.id}} </h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Nakliye Ödeme Güncelleme</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Default box -->
+      <div class="card">
+
+        <div class="card-body">
+
+          <div class="col-sm-12 col-md-12 col-12">
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Telefon No</label>
+                  <input type="text" id="phone_number" name="phone_number" class="form-control" cols="40" value="{{cargo_info.phone_number}}" disabled>
+
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Plaka No</label>
+                  <input type="text" id="vehicle" name="vehicle" class="form-control" cols="40" value="{{cargo_info.vehicle}}" disabled>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">İrsaliye No</label>
+                  <input type="text" id="waybill_number" name="waybill_number" class="form-control" cols="40" value="{{cargo_info.despatch_number}}" disabled>
+
+                </div>
+              </div>
+             
+            </div>
+
+       
+
+
+            <form action="{% url 'accounting_logistic_update' cargo_info.id %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">1. İrsaliye</label>
+                    {% if cargo_info.photo_1 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_1}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_1" id="photo_1" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('photo_1')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">2. İrsaliye</label>
+                    {% if cargo_info.photo_2 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_2}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_2" id="photo_2" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('photo_2')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">3. İrsaliye</label>
+                    {% if cargo_info.photo_3 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_3}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="photo_3" id="photo_3" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('photo_3')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">1. Fatura</label>
+                    {% if cargo_info.invoice_1 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_1}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_1" id="invoice_1" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('invoice_1')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">2. Fatura</label>
+                    {% if cargo_info.invoice_2 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_2}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_2" id="invoice_2" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('invoice_2')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">3. Fatura</label>
+                    {% if cargo_info.invoice_3 %}
+                    <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_3}}"
+                      target="_blank">Tıklayın</a>
+                    {% else %}
+                    <input type="file" name="invoice_3" id="invoice_3" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('invoice_3')" />
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+              {%if cargo_cost.amount > 0%}
+              <div class="row">
+  
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Toplam Borç(₺)</label>
+                    <input type="text" id="total_price" name="total_price" class="form-control" cols="40"
+                      value="{{cargo_cost.amount}}" disabled>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Toplam Ödenen(₺)</label>
+                    <input type="text" id="total_paid" name="total_paid" class="form-control" cols="40"
+                      value="{{cargo_cost.total_paid}}" disabled>
+  
+                  </div>
+                </div>
+  
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Toplam Kalan(₺)</label>
+                    <input type="text" id="debt" name="debt" class="form-control" cols="40" value="{{cargo_cost.debt}}"
+                      disabled>
+  
+                  </div>
+                </div>
+  
+              </div>
+              {%else%}
+  
+              <div class="row">
+  
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Ücret(₺)</label>
+                     <input type="number" step='any' id="total_price" name="total_price" class="form-control" cols="40" required value="0" onchange="calculateTotal()" >
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">KDV(%)</label>
+                     <input type="number" step='any' id="vat" name="vat" class="form-control" cols="40" value="18" required  onchange="calculateTotal()">
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Toplam Borç(₺)</label>
+                    <input type="text" id="debt" name="debt" class="form-control" cols="40" value="0"
+                      disabled>
+  
+                  </div>
+                </div>
+  
+              </div>
+  
+              {%endif%}
+
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Ödenecek Miktar(₺)</label>
+                    <input type="number" step='any' id="paid_money" name="paid_money" class="form-control" cols="40"
+                      value="0">
+
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Ödeme Tarihi:</label>
+                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                      <input type="text" name="pay_at" id="pay_at" class="form-control datetimepicker-input"
+                        value="{% now 'Y-m-d' %}" data-target="#reservationdate" required>
+                      <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Dekont</label>
+                    <input type="file" name="receipt" id="receipt" class="form-control" accept=".pdf,.jpeg,.jpg"
+                      onchange="Filevalidation('receipt')" />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-md-8 col-sm-8 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Açıklama</label>
+                    {% if buying.shipment.note|length > 0 %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz...">{{ buying.shipment.note }}</textarea>
+                    {% else %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz..."></textarea>
+                    {% endif %}
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                  <button name="submit" type="submit" class="btn btn-primary">Güncelle</button>
+                </div>
+              </div>
+
+            </form>
+            <hr>
+
+
+
+            <br>
+
+            <div>
+
+              <label class="text-success">Nakliye Toplam:{{cargo_cost.price}}₺ KDV Toplam:{{cargo_cost.total_vat}}₺  Genel Toplam:{{cargo_cost.amount}}₺</label>
+              <br>
+              <label class="text-success">Ödeme Geçmişi</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Çıkış Tarihi</th>
+                    <th class="text-muted">Ödenen</th>
+                    <th class="text-muted">Kalan</th>
+                    <th class="text-muted">Ödeme Tarihi</th>
+                    <th class="text-muted">Fature-Dekont</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in history %}
+                  <tr class="text-success">
+                    <td>{{cargo_info.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>{{object.total_paid}}</td>
+                    <td>{{object.debt}}</td>
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>
+                      {% if object.invoice_1 %}
+                      <a class="btn btn-block btn-outline-success" href="../../../media/{{object.invoice_1}}"
+                        target="_blank">Tıklayın</a>
+                      {% else %}
+                      <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <br>
+
+            <div class="row">
+
+              <label class="text-success">Kargo Detayları</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Şirket</th>
+                    <th class="text-muted">Lokasyon</th>
+                    <th class="text-muted">Malzeme Adı</th>
+                    <th class="text-muted">Palet</th>
+                    <th class="text-muted">Sipariş-Teslim Tarihi</th>
+                    <th class="text-muted">Durum</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in cargo_details_list %}
+                  <tr>
+                    <td>{{object.company__name}}</td>
+                    <td>{{object.company__city__name}}</td>
+                    <td>{{object.product_details__product__name}}</td>
+                    <td>{{object.quantity}}</td>
+                    {% if object.finished_at %}
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}-{{object.finished_at|date:"Y-m-d H:i"}}</td>
+                    {% else %}
+                    <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                    {% endif %}
+                    {% if object.is_delivered %}
+                    <td>Teslim Edildi</td>
+                    {% else %}
+                    <td>Dağıtıma Çıktı</td>
+                    {% endif %}
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg')) {
+          alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    var paidMoney = $('#paid_money').val();
+    var debt = parseFloat($('#debt').val());
+    if (paidMoney > debt) {
+      alert('En fazla ' + String(debt) + ' TL giriş yapabilirsiniz.');
+      $('#paid_money').focus();
+      return false;
+    }
+
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+
+
+  })
+</script>
+
+
+<script>
+  function calculateTotal() {
+    var totalPrice = parseFloat(document.getElementById('total_price').value);
+    var vat = parseFloat(document.getElementById('vat').value);
+    var debt = (totalPrice * (1 + (vat / 100))).toFixed(2);
+    document.getElementById('debt').value = debt;
+  }
+</script>
+
+
+{% endblock %}

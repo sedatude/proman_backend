@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="text-muted">Yeni Malzeme Alım Kaydı</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Satın Alma</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Default box -->
+      <div class="card">
+
+        <div class="card-body">
+
+          <div class="col-sm-12 col-md-12">
+            <form action="{% url 'purchasing_new_order' %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="row">
+                <div class="col-md-6 col-sm-6">
+                  <div class="form-group">
+                    <label class="text-muted">Kullanıcı Email</label>
+                    <input type="text"  value="{{user.email}}" class="form-control" cols="40" disabled>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                  <div class="form-group">
+                    <label class="text-muted">Tarih</label>
+                    <input type="text" value="{{date_str}}" class="form-control" cols="40" disabled>
+
+                  </div>
+                </div>
+
+
+              </div>
+
+
+
+             
+
+              <div class="row">
+                <div class="col-md-12 col-sm-12">
+                  <div class="form-group">
+                    <label class="text-muted">Açıklama</label>
+                    {% if note|length > 0 %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz...">{{ note }}</textarea>
+                    {% else %}
+                    <textarea id="note" name="note" class="form-control"
+                      placeholder="Lütfen açıklama giriniz..."></textarea>
+                    {% endif %}
+
+                  </div>
+                </div>
+              </div>
+
+
+
+              <hr>
+
+              {% for i in material_range %}
+              <div class="row">
+                <div class="col-md-7 col-sm-7">
+                  <div class="form-group">
+                    <label class="text-muted">{{i}}. Malzeme</label>
+                    <select class="form-control select2" style="width: 100%;" id="material_{{i}}" name="material_{{i}}">
+                      <option value="0"> Lütfen Malzeme Seçiniz...</option>
+                      {% for material in material_list %}
+                      <option value="{{material.id}}"> {{material.name}}({{material.description}})(Vergi:{{material.vat}})</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label class="text-muted">KG-Adet</label>
+                    <input type="number" step="any" id="quantity_{{i}}" name="quantity_{{i}}" class="form-control"
+                      cols="40" value="0" required>
+
+                  </div>
+                </div>
+
+                <div class="col-md-3 col-sm-3">
+                  <div class="form-group">
+                    <label class="text-muted">Not</label>
+                    <input type="text" id="note_{{i}}" name="note_{{i}}" class="form-control" cols="40"
+                      placeholder="........">
+                  </div>
+                </div>
+
+              </div>
+              {% endfor %}
+
+
+
+
+
+              <div class="col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                  <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+
+
+          </div>
+
+
+
+
+        </div>
+      </div>
+      <!-- /.card -->
+    </div>
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name.toLowerCase()
+          .endsWith('.jpeg')) {
+          alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    company_1 = document.getElementById("company_1");
+    if (company_1.options[company_1.selectedIndex].value == 0) {
+      alert("Lütfen Gönderen Firmayı Seçiniz...!");
+      $(company_1).focus();
+      return false;
+    }
+
+
+
+
+    let material_selected = false;
+
+    for (let i = 1; i < 16; i++) {
+
+      material_id = "material_" + i
+
+      mat = document.getElementById(material_id);
+      mat_data = mat.options[mat.selectedIndex].value;
+
+      if (mat_data > 0) {
+        material_selected = true
+        quantity_ = "#quantity_" + i
+        plus_ = "#plus_" + i
+        minus_ = "#minus_" + i
+
+
+
+
+
+        if ($(quantity_).val() < 1) {
+          alert("Lütfen " + i + ". malzeme için adet bilgisi giriniz...!");
+          $(quantity_).focus();
+          return false;
+        }
+
+
+        if (parseFloat($(plus_).val()) >= parseFloat($(quantity_).val())) {
+          alert("Lütfen " + i +
+            ". malzeme için Fazma Miktar sahasını güncelleyiniz. Fazlalık adetten yüksek olamaz...!");
+          $(plus_).focus();
+          return false;
+        }
+
+        if (parseFloat($(minus_).val()) >= parseFloat($(quantity_).val())) {
+          alert("Lütfen " + i +
+            ". malzeme için Eksik Miktar sahasını güncelleyiniz. Eksiklik adetten yüksek olamaz...!");
+          $(minus_).focus();
+          return false;
+        }
+
+        if (parseFloat($(plus_).val()) != 0 && parseFloat($(minus_).val()) != 0) {
+          alert("Lütfen " + i + ". malzeme için fazla veya eksik sahalarından birine giriş yapınız...!");
+          $(plus_).focus();
+          return false;
+        }
+      }
+
+      if (material_selected == false) {
+        alert("Lütfen  en az bir tane Malzeme girişi yapınız...!");
+        $("material_1").focus();
+        return false;
+      }
+
+
+
+    }
+
+
+
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+{% endblock %}

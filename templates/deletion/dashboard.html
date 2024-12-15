@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+    <!-- Üretim Kayıt Silme -->
+    <section class="content">
+      <div class="card">
+      
+        <div class="card-header">
+          <h1 class="card-title text-success"> <b>Üretim Kayıt Silme.</b> Silinen kayıtlar sonrası kullanılan malzemeler tekrar depaya iade edilir  </h1>
+        
+        </div>
+        
+        <div class="card-body">
+        
+          <form action="{% url 'deletion_delete_record'%}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-6">
+              <div class="form-group">
+                <label class="text-muted">Silinecek Kayıtlar</label>
+                <textarea id="id_list" name="id_list" class="form-control" placeholder="Virgül(,) ile birden fazla kayıt girebilirsiniz!" required></textarea>
+              </div>
+            </div>
+          
+            <div class="col-md-6 col-sm-6 col-6">
+              <div class="form-group">
+                <label class="text-muted">Açıklama</label>
+                <textarea id="note" name="note" class="form-control"  placeholder="Lütfen açıklama giriniz..."></textarea>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-md-6 col-sm-6 col-6">
+            <div class="form-group">
+              
+              <input type="hidden" name="function_name" value="production_delete">
+              <button name="confirm" type="submit" value="1" class="btn btn-success">ONAYLA</button>
+            </div>
+          </div>
+
+        </form>
+          
+        </div>
+        <!-- /.card-body -->
+      </div>
+
+
+    </section>
+  <!-- Üretim Kayıt Silme -->
+  <br>
+
+  <!-- Lojistik Kayıt Silme -->
+  <section class="content">
+    <div class="card">
+    
+      <div class="card-header">
+        <h1 class="card-title text-success"> <b>Lojistik Kayıt Silme.</b> Silinen kayıtlar sonrası Ürünler depaya iade edilir.  </h1>
+      
+      </div>
+      
+      <div class="card-body">
+      
+        <form action="{% url 'deletion_delete_record'%}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-6">
+            <div class="form-group">
+              <label class="text-muted">Silinecek Kayıtlar</label>
+              <textarea id="id_list" name="id_list" class="form-control" placeholder="Virgül(,) ile birden fazla kayıt girebilirsiniz!" required></textarea>
+            </div>
+          </div>
+        
+          <div class="col-md-6 col-sm-6 col-6">
+            <div class="form-group">
+              <label class="text-muted">Açıklama</label>
+              <textarea id="note" name="note" class="form-control"  placeholder="Lütfen açıklama giriniz..."></textarea>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-md-6 col-sm-6 col-6">
+          <div class="form-group">
+            
+            <input type="hidden" name="function_name" value="logistic_delete">
+            <button name="confirm" type="submit" value="1" class="btn btn-success">ONAYLA</button>
+          </div>
+        </div>
+
+      </form>
+        
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+  <!-- Lojistik Kayıt Silme -->
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+  $(function () {
+
+
+
+   
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": false, "iDisplayLength": 25,  "order": [[6, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+
+  });
+</script>
+
+
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+{% endblock %}

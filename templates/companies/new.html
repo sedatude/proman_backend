@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Şirket İşlemleri</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Anasayfa</a></li>
+              <li class="breadcrumb-item active">Şirket İşlemleri</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+<section class="content">
+
+   <div class="card-body">
+    <div class="col-sm-6 col-12">
+      <form action="{% url 'new_company' %}" method="POST"enctype="multipart/form-data">
+          {% csrf_token %}
+        <div class="form-group">
+          <label for="type">Şirket Tipi Seçiniz</label> 
+          <div>
+            <select id="type_id" name="type_id" required="required" class="form-control">
+              <option value="0">  Lütfen Şirket Seçiniz...</option>
+              {% for type in type_list %}
+              <option value="{{type.id}}" {% if type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Kullanım Tipi Seçiniz</label> 
+          <div>
+            <select id="usage_type_id" name="usage_type_id" required="required" class="form-control">
+              <option value="0">  Lütfen Kullanım Tipi Seçiniz...</option>
+              {% for type in usage_type_list %}
+              <option value="{{type.id}}" {% if usage_type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Şirket Adı</label> 
+          <textarea id="name" name="name" cols="40" rows="1" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="full_name">Şirket Tam Adı</label> 
+          <textarea id="full_name" name="full_name" cols="40" rows="2" class="form-control" required></textarea>
+        </div>
+       
+        <div class="form-group">
+          <label for="address">Adres</label> 
+          <textarea id="address" name="address" cols="40" rows="3" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Şehir Seçiniz</label> 
+          <div>
+            <select id="city_id" name="city_id" required="required" class="form-control">
+              <option value="0">  Lütfen Şehir Seçiniz...</option>
+              {% for type in city_list %}
+              <option value="{{type.id}}" {% if city_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="registration_no">Banka Iban-Hesap No</label> 
+          <textarea id="registration_no" name="registration_no" rows="1" class="form-control"></textarea>
+        </div>
+
+         
+        <div class="form-group">
+          <label for="tax_place">Vergi Dairesi</label> 
+          <textarea id="tax_place" name="tax_place"  rows="1" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="tax_number">Vergi Numarası</label> 
+          <textarea id="tax_number" name="tax_number"  rows="1" class="form-control"></textarea>
+        </div>
+
+            
+        <div class="form-group">
+          <label for="web_site">Web Sitesi</label> 
+          <textarea id="web_site" name="web_site"  rows="1" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-mail</label> 
+          <textarea id="email" name="email" rows="1" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Telefon</label> 
+          <textarea id="phone" name="phone" rows="1" class="form-control"></textarea>
+        </div>
+
+            
+        <div class="form-group">
+          <label for="contact_name">Yetkili Kişi</label> 
+          <textarea id="contact_name" name="contact_name" rows="1"   class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="second_phone">2. Telefon</label> 
+          <textarea id="second_phone" name="second_phone" rows="1"  class="form-control"></textarea>
+        </div>
+
+        
+         
+
+        <div class="form-group">
+          <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>
+
+
+    </div>
+      </div>
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+  
+
+ 
+{% endblock %}
+
+
+
+
+
+{% block javascript%}
+
+<script type="text/javascript">
+
+$('form').on('submit', function(){
+
+  type_id = document.getElementById("type_id");
+  if (type_id.options[type_id.selectedIndex].value == 0){
+      alert("Lütfen Şirket Tipini Seçiniz...!");
+      $(type_id).focus();
+        return false;}
+
+  usage_type_id = document.getElementById("usage_type_id");
+  if (usage_type_id.options[usage_type_id.selectedIndex].value == 0){
+      alert("Lütfen Şirket Kullanım Tipini Seçiniz...!");
+      $(usage_type_id).focus();
+        return false;}
+ 
+
+        Swal.fire({
+          title: 'Güncelleniyor...',
+          html: 'Lütfen Bekleyiniz...',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        });
+
+})
+  
+  </script>
+
+
+
+{% endblock %}
+
+

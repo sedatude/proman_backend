@@ -1,0 +1,176 @@
+   
+ {% load static %} 
+ <!-- Control Sidebar -->
+ <aside class="control-sidebar control-sidebar-dark">
+   <!-- Control sidebar content goes here -->
+ </aside>
+ <!-- /.control-sidebar -->
+<!-- ./wrapper -->
+
+
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="{% static 'plugins/sweetalert2/sweetalert2.js' %}"></script>
+<script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+
+<!-- AdminLTE for demo purposes -->
+<script src="{% static 'dist/js/demo.js' %}"></script>
+ 
+<!-- Select2 -->
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<!-- Bootstrap4 Duallistbox -->
+<script src="{% static 'plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js' %}"></script>
+<!-- InputMask -->
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+
+<!-- bootstrap color picker -->
+<script src="{% static 'plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' %}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<!-- Bootstrap Switch -->
+<script src="{% static 'plugins/bootstrap-switch/js/bootstrap-switch.min.js' %}"></script>
+<!-- BS-Stepper -->
+<script src="{% static 'plugins/bs-stepper/js/bs-stepper.min.js' %}"></script>
+<!-- dropzonejs -->
+<script src="{% static 'plugins/dropzone/min/dropzone.min.js' %}"></script>
+
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+
+
+
+
+<script>
+
+
+ $(function () {
+
+    
+ 
+
+
+
+   //Initialize Select2 Elements
+   $('.select2').select2()
+
+   //Initialize Select2 Elements
+   $('.select2bs4').select2({
+     theme: 'bootstrap4'
+   })
+
+   //Datemask dd/mm/yyyy
+   $('#datemask').inputmask('YYYY-MM-DD', { 'placeholder': 'YYYY-MM-DD' })
+   //Datemask2 mm/dd/yyyy
+
+   //Money Euro
+   $('[data-mask]').inputmask()
+//Date and time picker
+
+
+ 
+   $('#longdate,#longdate2').datetimepicker({
+     icons: { time: 'far fa-clock' },
+     format: 'YYYY-MM-DD HH:mm:ss',
+      
+     sideBySide: true  
+   });
+
+   //Date picker
+   $('#reservationdate,#reservationdate2').datetimepicker({
+     format: 'YYYY-MM-DD' 
+   });
+   $('.datetimepicker').each(function(){
+     $(this).datetimepicker();
+ });
+
+  
+
+
+  
+   
+
+   //Bootstrap Duallistbox
+   $('.duallistbox').bootstrapDualListbox()
+
+   //Colorpicker
+   $('.my-colorpicker1').colorpicker()
+   //color picker with addon
+   $('.my-colorpicker2').colorpicker()
+
+   $('.my-colorpicker2').on('colorpickerChange', function(event) {
+     $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+   })
+
+   $("input[data-bootstrap-switch]").each(function(){
+     $(this).bootstrapSwitch('state', $(this).prop('checked'));
+   })
+
+ });
+
+ 
+ const Toast = Swal.mixin({
+   toast: true,
+   position: 'top-right',
+   showConfirmButton: true,
+   timer: 5000,
+   
+   timerProgressBar: true,
+   didOpen: (toast) => {
+     toast.addEventListener('mouseenter', Swal.stopTimer)
+     toast.addEventListener('mouseleave', Swal.resumeTimer)
+     
+   }
+ })
+
+
+
+</script>
+
+<script type="text/javascript">
+ document.addEventListener("DOMContentLoaded", function(event) {
+
+  {% for message in messages %}
+   let icon = "{{message.tags}}"
+   if (icon == "danger")
+     icon = "error"
+     Toast.fire({
+       icon: icon,
+       title: "{{message}}",
+     })
+  {% endfor %}
+ 
+     /* 
+       - Code to execute when only the HTML document is loaded.
+       - This doesn't wait for stylesheets, 
+         images, and subframes to finish loading. 
+     */
+ });
+</script>
+
+
+{% block script %}
+
+{% endblock %}
+

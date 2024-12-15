@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Ürün için Geçici Malzeme Listesi</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Geçici Malzeme Listesi</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-sm-5">
+            <p class="float-start"> {% include 'includes/alerts.html' %}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <div class="col-sm-12 col-md-12">
+          <form action="{% url 'acceptment_change' product.id %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label for="product">Ürün Adı</label>
+                  <text id="product" name="product" class="form-control" aria-readonly="true">{{product.name}}</text>
+                </div>
+              </div>
+
+
+            </div>
+
+
+            <hr>
+
+            {% for mat in product_material_list %}
+            <div class="row">
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label for="material_{{ forloop.counter }}_label">{{ forloop.counter }}. Malzeme</label>
+                  <select class="form-control select2" style="width: 100%;" id="material_{{ forloop.counter }}"
+                    name="material_{{ forloop.counter }}">
+                    <option value="0"> Lütfen Malzeme Seçiniz...</option>
+                    {% for material in material_list %}
+                    <option value="{{material.id}}" {% if mat.material_id == material.id %}
+                      selected={{material.id}}{% endif %}> {{material.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                  <label for="quantity_{{ forloop.counter }}_label">Miktar(KG-LT)/Adet</label>
+                  <input type="number" step="any" id="quantity_{{ forloop.counter }}"
+                    name="quantity_{{ forloop.counter }}" class="form-control" cols="40" value="{{mat.quantity}}"
+                    required>
+
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                  <label for="cost_type_{{ forloop.counter }}_label">Maliyet Tipi</label>
+                  <select class="form-control select2" style="width: 100%;" id="cost_type_{{ forloop.counter }}"
+                    name="cost_type_{{ forloop.counter }}">
+                    <option value="0"> Lütfen Maliyet Tipi Seçiniz...</option>
+                    {% for cost_type in cost_type_list %}
+                    <option value="{{cost_type.id}}" {% if mat.cost_type_id == cost_type.id %}
+                      selected={{cost_type.id}}{% endif %}> {{cost_type.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+            </div>
+            {% endfor %}
+
+
+
+
+            {% if new_list_range %}
+            {% for i in new_list_range %}
+            <div class="row">
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label for="material_{{ forloop.counter }}_label">{{ i }}. Malzeme</label>
+                  <select class="form-control select2" style="width: 100%;" id="material_{{ i }}"
+                    name="material_{{ i }}">
+                    <option value="0"> Lütfen Malzeme Seçiniz...</option>
+                    {% for material in material_list %}
+                    <option value="{{material.id}}" {% if mat.id == material.id %} selected={{mat.id}}{% endif %}>
+                      {{material.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                  <label for="quantity_{{ i }}_label">Miktar(KG-LT)/Adet</label>
+                  <input type="number" step="any" id="quantity_{{ i }}" name="quantity_{{ i }}" class="form-control"
+                    cols="40" value="0" required>
+
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                  <label for="cost_type_{{ i }}_label">Maliyet Tipi</label>
+                  <select class="form-control select2" style="width: 100%;" id="cost_type_{{ i }}"
+                    name="cost_type_{{ i }}">
+                    <option value="0"> Lütfen Maliyet Tipi Seçiniz...</option>
+                    {% for cost_type in cost_type_list %}
+                    <option value="{{cost_type.id}}" {% if mat.cost_type_id == cost_type.id %}
+                      selected={{cost_type.id}}{% endif %}> {{cost_type.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <div class="col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <button name="submit" type="submit" class="btn btn-primary">İstek Gönder</button>
+              </div>
+            </div>
+          </form>
+
+
+        </div>
+
+
+
+
+      </div>
+    </div>
+    <!-- /.card -->
+
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (name.endsWith('.pdf') == false) {
+          alert("Sadece PDF dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+
+
+          return "NOK"
+        } else if (file >= 2048) {
+          alert(
+            "Dosya boyutu çok büyük En fazla 2 Megabyte yükleyebilirsiniz.");
+          console.log("else if (file >= 2048) {")
+          return "NOK"
+        }
+        return "OK"
+      }
+    }
+  }
+</script>
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    let material_selected = false;
+
+    for (let i = 1; i < 16; i++) {
+
+      material_id = "material_" + i
+      mat = document.getElementById(material_id);
+      mat_data = mat.options[mat.selectedIndex].value;
+
+      if (mat_data > 0) {
+        material_selected = true
+        //alert("mat_data:"+mat_data+" material_id:"+material_id)
+
+        cost_type_id = "cost_type_" + i
+        cost_type = document.getElementById(cost_type_id);
+        cost_type_data = cost_type.options[cost_type.selectedIndex].value;
+
+        if (cost_type_data == 0) {
+          alert("Lütfen " + i + ". malzeme için maliyet tipi bilgisi giriniz...!");
+          $(cost_type_data).focus();
+          return false;
+        }
+
+
+
+        quantity_ = "#quantity_" + i
+        if ($(quantity_).val() < 1) {
+          alert("Lütfen " + i + ". malzeme için miktar bilgisi giriniz...!");
+          $(quantity_).focus();
+          return false;
+        }
+
+
+      }
+
+
+
+
+    }
+
+
+    if (material_selected == false) {
+      alert("Lütfen  en az bir tane Malzeme girişi yapınız...!");
+      $("material_1").focus();
+      return false;
+    }
+
+
+
+
+
+    $("body").loading({
+      stoppable: false,
+      message: "LÜTFEN BEKLEYİNİZ...",
+      theme: "dark"
+    });
+
+  })
+</script>
+
+{% endblock %}

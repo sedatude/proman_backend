@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+  <section class="content">
+    <div class="container-fluid">
+  
+      <div class="row">
+        <div class="col-lg-3 col-6">
+  
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{production_stock}}</h3>
+              <p>Üretimdeki Toplam Ürün</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-hands-holding-circle"></i>
+            </div>
+            <a href="{% url 'production' %}" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+  
+        <div class="col-lg-3 col-6">
+  
+          <div class="small-box bg-success">
+            <div class="inner">
+              <h3>{{product_stock}}</h3>
+              <p>Stoktaki Ürün Sayısı</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-pump-soap nav-icon"></i>
+            </div>
+            <a href="{% url 'selling' %}" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+  
+        <div class="col-lg-3 col-6">
+  
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h3>{{material_lower}}</h3>
+              <p>Azalan Malzeme Sayısı</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-circle-exclamation nav-icon"></i>
+            </div>
+            <a href="{% url 'material_stock'%}" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+  
+        <div class="col-lg-3 col-6">
+  
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3>{{material_empty}}</h3>
+              <p>Biten Malzeme Sayısı</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-circle-xmark nav-bar"></i>
+            </div>
+            <a href="{% url 'material_stock'%}" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+  
+      </div>
+  
+   
+    </div>
+  </section>
+  
+  
+  <section class="content">
+   
+    <!-- Default box -->
+    <div class="card">
+      
+      <div class="text-success card-header border-0">
+        <div class="d-flex justify-content-between">
+          <h3 class="card-title" id="total_production_count">Toplam Ürün Adet</h3>
+          <h3 class="card-title"id="total_production_type"  >Toplam Ürün Çeşidi </h3>
+          
+        </div>
+      </div>
+        <div class="card-body">
+          <div class="row">
+           
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="text-warning card-header border-0">
+                  {% comment %} <div class="d-flex justify-content-between">
+                    <h3 class="card-title">{{company.name}}</h3>
+                    
+                    <span class="text-bold text-sm" id="company_dc_power_{{company.id}}">Üretim</span> 
+                  </div> {% endcomment %}
+                </div>
+              <div class="card-body">
+                {% comment %} <div class="d-flex">
+                  <p class="text-info d-flex flex-column">
+                    <span class="text-bold text-sm" id="company_production_{{company.id}}">Üretim</span> 
+                    <span class="text-bold text-sm" id="company_revenue_{{company.id}}">Kazanç</span> 
+                  </p>
+                   <div class="ml-auto d-flex flex-column text-right" id="company_percentage_{{company.id}}" >
+                    
+                    </div>
+                   
+                  </p>
+                </div> {% endcomment %}
+                <!-- /.d-flex -->
+
+                <div class="chart">
+                  <canvas id="barChart_1" style="height:230px; min-height:230px"></canvas>
+                </div>
+
+            
+              </div>
+              
+
+            </div>
+          </div>
+
+     
+           
+          </div>
+
+
+        </div>  <!-- /row-->
+        <!-- /.card-body -->
+       
+        <!-- /.card-footer-->
+      </div>
+      
+
+
+        <!-- /.card-body -->
+      
+      <!-- /.card -->
+
+  </section>
+
+
+
+
+  <section class="content">
+    <div class="row">
+
+       
+
+      <div class="col-md-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Ürünler</h3>
+            
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="chart-responsive">
+                  <canvas id="donutChart"
+                  style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+
+              </div>
+
+              {% comment %} <div class="col-md-4">
+                <ul class="chart-legend clearfix">
+                  <li><i class="far fa-circle text-danger"></i> Chrome</li>
+                  <li><i class="far fa-circle text-success"></i> IE</li>
+                  <li><i class="far fa-circle text-warning"></i> FireFox</li>
+                  <li><i class="far fa-circle text-info"></i> Safari</li>
+                  <li><i class="far fa-circle text-primary"></i> Opera</li>
+                  <li><i class="far fa-circle text-secondary"></i> Navigator</li>
+                </ul>
+              </div> {% endcomment %}
+
+            </div>
+
+          </div>
+
+          <div class="card-footer p-0">
+            <ul id="products_ul" class="nav nav-pills flex-column">
+           
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+  </section>
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+ 
+
+<script>
+  $(function (){
+  
+  
+  
+    const data_list = {{data_json|safe}};
+    var total_production = (data_list.map(data_list => data_list.total).reduce((acc, data_list) => data_list + acc));
+    
+    
+  
+    const result = data_list.reduce((a, {product_id, product__name, total}) => {
+      a[product_id] = a[product_id] || {product_id, product__name, total: 0};
+      a[product_id].total += total;
+      return a;
+    }, {})
+ 
+    var total_production_type = Object.values(result).length;
+ 
+        
+    document.getElementById("total_production_count").innerHTML = 'Toplam Üretim:'+ new Intl.NumberFormat().format(parseInt(total_production)) ;
+    document.getElementById("total_production_type").innerHTML = 'Toplam Ürün Çeşidi:'+ new Intl.NumberFormat().format(parseInt(total_production_type)) ;
+    
+    var labels = []
+    var data = []
+
+    var labels_chart = []
+    var data_chart = []
+      
+      for(var i in data_list)
+        {
+          data.push(data_list[i]['total'])
+          labels.push(data_list[i]['read_date'].substr(2,9))
+        }
+  
+    var areaChartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Üretim(Adet)',
+            backgroundColor: 'rgba(48,167,74,0.9)',
+            borderColor: 'rgba(60,141,188,0.8)',
+            pointRadius: false,
+            pointColor: '#3b8bba',
+            pointStrokeColor: 'rgba(48,167,74,1)',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(48,167,74,1)',
+            data: data
+          }
+        ]
+      }
+  
+    
+      var barChartData = jQuery.extend(true, {}, areaChartData)
+      
+      var temp0 = areaChartData.datasets[0]
+      barChartData.datasets[0] = temp0
+  
+      var barChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetFill: false
+      }
+      var barChartCanvas = $('#barChart_1').get(0).getContext('2d')
+      
+      var barChart = new Chart(barChartCanvas, {
+        type: 'bar',
+        data: barChartData,
+        options: barChartOptions
+      })
+
+      
+    var labels_chart = []
+    var data_chart = []
+      
+      for(var i in  Object.values(result))
+        {
+          data_chart.push( Object.values(result)[i]['total']);
+          labels_chart.push( Object.values(result)[i]['product__name']);
+           
+          var completelist= document.getElementById("products_ul");
+          completelist.innerHTML += '<li class="nav-item text-success">' + Object.values(result)[i]['product__name'] + '<span class="float-right ">' + Object.values(result)[i]['total'] +   ' adet</span>  </li>'
+          
+        }
+
+       //-------------
+    //- DONUT CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+    var donutData        = {
+      labels: labels_chart,
+      datasets: [
+        {
+          data: data_chart,
+          backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de' , '#e226de', '#69f554', '#01a69a', '#9c12f3', '#00e0cf', '#8d3cbc', '#d6d2de' , '#26e2de'],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'doughnut',
+      data: donutData,
+      options: donutOptions
+    })
+
+     
+
+
+
+
+  
+      $("form").submit(function () {
+      if ($(this).valid()) {
+        $(this).submit(function () {
+          return false;
+        });
+        return true;
+      }
+      else {
+        return false;
+      }
+      });
+  
+       
+      
+     // window.setTimeout(function () { location.href = "{{ dashboard }}";}, 5*60*1000); // refresh/redirect after   seconds.
+      
+  
+  })
+  
+</script>
+
+
+
+<script>
+  $(function () {
+   
+   
+    
+   
+  })
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="text-muted">Malzeme Güncelleme</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Anasayfa</a></li>
+              <li class="breadcrumb-item active">Malzeme Güncelleme</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+<section class="content">
+
+
+   <div class="card-body">
+    <div class="col-sm-6 col-12">
+      <form action="{% url 'edit_material' material.id %}" method="POST"enctype="multipart/form-data">
+          {% csrf_token %}
+        <div class="form-group">
+          <label class="text-muted">Malzeme Tipi Seçiniz</label> 
+          <div>
+            <select id="type_id" name="type_id" required="required" class="custom-select">
+              <option value="0">  Lütfen Malzeme Tipi Seçiniz...</option>
+              {% for type in type_list %}
+              <option value="{{type.id}}" {% if material.type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Kullanım Amacı Seçiniz</label> 
+          <div>
+            <select id="usage_type_id" name="usage_type_id" required="required" class="custom-select">
+              <option value="0">  Lütfen Kullanım Amacı Seçiniz...</option>
+              {% for type in usage_type_list %}
+              <option value="{{type.id}}" {% if material.usage_type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Malzeme Adı</label> 
+          <textarea id="name" name="name" cols="40" rows="1" class="form-control" required>{{material.name}}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Ölçü Birimi</label> 
+          <div>
+            <select id="measurement_type_id" name="measurement_type_id" required="required" class="custom-select">
+              <option value="0">Lütfen Ölçü Birimi Seçiniz...</option>
+              {% for type in measurement_list %}
+              <option value="{{type.id}}" {% if material.measurement_type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Maliyet Tipi</label> 
+          <div>
+            <select id="cost_type_id" name="cost_type_id" required="required" class="custom-select">
+              <option value="0">Lütfen Maliyet Tipini Seçiniz...</option>
+              {% for type in cost_type_list %}
+              <option value="{{type.id}}" {% if material.cost_type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+       
+        <div class="form-group">
+          <label class="text-muted">Açıklama</label> 
+          <textarea id="description" name="description" cols="40" rows="3" class="form-control" required>{{material.description}}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Vergi(%) </label> 
+          <input type="number" id="vat" name="vat" step="any" rows="1" class="form-control" value ="{{material.vat}}" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Uyarı Limiti</label> 
+          <input type="number" step="any" id="alert_limit" name="alert_limit" cols="40" rows="1" class="form-control" value="{{material.alert_limit}}" required>
+        </div>
+         
+        
+
+
+        <div class="form-group">
+          <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>
+
+
+    </div>
+      </div>
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+  
+
+ 
+{% endblock %}
+
+
+
+
+
+{% block javascript%}
+
+<script type="text/javascript">
+
+$('form').on('submit', function(){
+
+  type_id = document.getElementById("type_id");
+  if (type_id.options[type_id.selectedIndex].value == 0){
+      alert("Lütfen Firma Tipini Seçiniz...!");
+      $(type_id).focus();
+        return false;}
+
+  usage_type_id = document.getElementById("usage_type_id");
+  if (usage_type_id.options[usage_type_id.selectedIndex].value == 0){
+      alert("Lütfen Firma Kullanım Tipini Seçiniz...!");
+      $(usage_type_id).focus();
+        return false;}
+
+  measurement_type_id = document.getElementById("measurement_type_id");
+  if (measurement_type_id.options[measurement_type_id.selectedIndex].value == 0){
+      alert("Lütfen Ölçü Birimini Seçiniz...!");
+      $(measurement_type_id).focus();
+        return false;}
+        
+  cost_type_id = document.getElementById("cost_type_id");
+  if (cost_type_id.options[cost_type_id.selectedIndex].value == 0){
+      alert("Lütfen Maliyet Tipini Seçiniz...!");
+      $(cost_type_id).focus();
+        return false;}
+ 
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+})
+  
+  </script>
+
+  <script>
+
+    $("#type_id").change(function () {
+      
+      const usage_list = {{usage_type_list_json|safe}};
+      var options = usage_list.filter( usage_list => usage_list.material_type_id ==$(this).val())
+      $('#usage_type_id').empty();
+      for(var i in options){
+        document.getElementById("usage_type_id").add(new Option(options[i]['name'],options[i]['id']));
+  
+    }
+                
+              });
+  </script>
+
+{% endblock %}
+
+

@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        <h1 class="card-title text-success"> ONAY LİSTESİ :
+          {% for user in user_list %}
+           {{user}}@borline.com.tr 
+          {% endfor %}
+          </h1>
+          <br>
+          <h1 class="card-title text-warning"> Yeni malzemeler onaylandıktan sonra yetkili kullanıcılara e-mail olarak gönderilecektir. </h1>
+
+       
+        <br>
+        <h1 class="card-title text-warning"> Lütfen kontrollerinizi yaptıktan sonra Onayla butonuna tıklayınız. </h1>
+      </div>
+      <!-- /.card-header -->
+      {% if stock_list %}
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="text-muted">İrsaliye No</th>
+                <th class="text-muted">Tarih</th>
+                <th class="text-muted">Gönderen Firma</th>
+                <th class="text-muted">Genel Not</th>
+                <th class="text-muted">Malzeme Adı</th>
+                <th class="text-muted">Adet/Miktar</th>
+                <th class="text-muted">Eksik-Fazlalık</th>
+                <th class="text-muted">Not</th>
+                <th class="text-muted">İşlem</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for object in stock_list %}
+
+              <tr>
+                <td>{{object.shipment__despatch_number}}</td>
+                <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                <td>{{object.shipment__company__name}}</td>
+                <td>{{object.shipment__note}}</td>
+                <td>{{object.material__name}}</td>
+                <td>{{object.quantity}}</td>
+                <td>{{object.quantity_extra}}</td>
+                <td>{{object.note}}</td>
+              
+                
+                  <td>
+                    <ul class="list-inline m-0">
+                      <li class="list-inline-item">
+                          <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-warning_{{ object.id }}" title="Onayla"><i class="fa fa-check"></i></button>
+                      </li>
+                      <li class="list-inline-item">
+                        <a href="{% url 'store_edit' object.shipment_id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button"  data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                          <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-danger_{{ object.id }}" title="Sil"><i class="fa fa-trash"></i></button>
+                      </li>
+                  </ul>
+                    
+                  </td>
+
+                <div class="modal fade" id="modal-danger_{{ object.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-danger">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ? İrsaliye No:{{object.shipment__despatch_number}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>İrsaliye No::{{object.shipment__despatch_number}} ile eşleşen bütün kayıtlar silinecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url 'delete_shipment' %}" method='post'>
+                          {% csrf_token %}
+                          <input type="hidden" name="object_id" value="{{ object.shipment_id }}">
+                          <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+                <div class="modal fade" id="modal-warning_{{ object.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-success">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ? İrsaliye No:{{object.shipment__despatch_number}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <onspan aria-hidden="true">&times;</onspan>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>İrsaliye No:{{object.shipment__despatch_number}} Kullanıcıların onayına gönderilecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url  'confirm_incoming_shipment_entrance' %}" method='post' enctype="multipart/form-data">
+                          {% csrf_token %}
+                        
+                            <input type="hidden" name="ship_id" value="{{ object.shipment_id }}">
+                            <!-- <input type="hidden" name="rate_str" value="{{ rate_str }}">
+                            <input type="hidden" name="mail_list" value="{{ user_list }}"> -->
+                          <button type="submit" value="yes" class="btn btn-outline-light"  onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light"  data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+                {% endfor %}
+
+            </tbody>
+
+          </table>
+        </div>
+     
+        {% else %}  
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Onay Bekleyen Malzeme Listesi bulunamadı. </h1>
+        <br><br>
+        <a href="{% url 'store_new' %}">  <button class="btn btn-sm btn-outline-success">Yeni Kayıt Ekle</button></a>          
+      </div>
+      {% endif %}
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+
+<script>
+ 
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50, "order": [[1, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+
+
+$('form').on('submit', function(){
+
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+ 
+  
+  Swal.fire({
+    title: 'Güncelleniyor...',
+    html: 'Lütfen Bekleyiniz...',
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading()
+    }
+  });
+
+})
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+{% endblock %}

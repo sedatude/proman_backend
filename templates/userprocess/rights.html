@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+  <section class="content">
+
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-muted">{{user.username}} için  Kullanıcı Yetkilendirme İşlemleri. </h1>
+        <br>  
+      </div>
+
+     
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <form action="{% url 'edit_rights' user.id %}" method="POST">
+              {% csrf_token %}
+              {% for r in right_list%}
+              
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="r__{{ r.id }}" value="{{ r.id }}" {% if r.checked %} checked {% endif %}>
+                  <label class="form-check-label" for="flexCheckDefault" >
+                  {{r.description}} 
+                  </label>
+                </div>
+              {% endfor %}
+            
+            <br>
+            <input type="submit" value="Güncelle" class="btn btn-primary"> 
+          </form> 
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+<script type="text/javascript">
+
+$('form').on('submit', function(){
+
+  $("body").loading({
+      stoppable: false,
+      message: "LÜTFEN BEKLEYİNİZ...",
+      theme: "dark"
+    });
+
+})
+  
+  </script>
+ 
+
+
+{% endblock %}

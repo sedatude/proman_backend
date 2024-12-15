@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        <h1 class="card-title text-success"> Gönderilen Kargo Detayları Listelenmiştir. </h1>
+        <br>
+        <h1 class="card-title text-success"> Fatura İrsaliye ve Bilgi güncelleme için Lütfen <b>No</b> üzerine tıklayınız. </h1>
+        <br>
+        <h1 class="card-title text-success"> Teslim edilen ürünler için <b>Güncelle</b> Butonuna tıklayınız. </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            
+            <tr>
+              <th class="text-muted">No</th>
+              <th class="text-muted">Şirket Adı</th>
+              <th class="text-muted">Lokasyon</th>
+              <th class="text-muted">Ürün Adı</th>
+              <th class="text-muted">Palet</th>
+              <th class="text-muted">Tarih</th>
+              <th class="text-muted">Durum</th>
+              <th class="text-muted">İşlem</th> 
+              {% comment %} <th class="text-muted">Not</th>
+              <th class="text-muted">Durum</th>
+              <th class="text-muted">İşlem</th> {% endcomment %}
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for object in product_list %}
+            {% if object.is_delivered %}
+            <tr class="text-success">
+            {%else%}
+            <tr class="text-warning">
+            {%endif%}
+             <td>
+              <a href="{% url 'logistic_update_shipment' object.cargo_info_id %}">
+                {{object.cargo_info_id}}
+              </a>
+              </td>
+              <td>{{object.company__name}}</td>
+              <td>{{object.company__city__name}}</td>
+              <td>{{object.product_details__product__name}}</td>
+              <td>{{object.quantity|floatformat:0}}</td>
+              
+              {% if object.finished_at %}
+              <td>{{object.created_at|date:"Y-m-d H:i"}}-{{object.finished_at|date:"Y-m-d H:i"}}</td>
+              {% else %}
+              <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+              {% endif %}
+              {% if object.is_delivered %}
+                <td>Teslim Edildi</td>
+              {% else %}
+              <td>Dağıtıma Çıktı</td>
+              {% endif %}
+              {% if object.is_delivered %}
+              
+                <td><button type="button" class="btn btn-outline-success" disabled>Güncelle</button></td>
+              {% else %}
+              <td>
+              <button class="btn btn-outline-success" type="button" data-toggle="modal" data-target="#modal-warning_{{ object.id }}" title="Teslim Edildi olarak Güncelle">Güncelle</button>
+              </td>
+                {% comment %} <td> <a href="{% url 'logistic_aprove_delivered' object.id %}"><button type="button" class="btn btn-outline-success">Teslim Edildi</button></a></td> {% endcomment %}
+              {% endif %}
+              {% comment %} <td>{{object.note}}</td>
+              <td>{{object.material__name}}</td>
+              
+              <td>
+                
+                <a href="#">
+                <button type="button" class="btn btn-outline-success">Güncelle</button>
+                </a>
+              </td> 
+              {% endcomment %}
+              
+              <div class="modal fade" id="modal-warning_{{ object.id }}">
+                <div class="modal-dialog">
+                  <div class="modal-content bg-success">
+                    <div class="modal-header">
+                      <h4 class="modal-title">EMİN MİSİNİZ?  Kargo No:{{object.cargo_info_id}}</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <onspan aria-hidden="true">&times;</onspan>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>{{object.cargo_info_id}} numaralı kargonun seçili şirkete ait bütün ürünleri TESLİM EDİLDİ olarak güncellenecektir. </p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+
+                      <form action="{% url  'confirm_logistic_delivered' %}" method='post' enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ object.id }}">
+                          <!-- <input type="hidden" name="rate_str" value="{{ rate_str }}">
+                          <input type="hidden" name="mail_list" value="{{ user_list }}"> -->
+                        <button type="submit" value="yes" class="btn btn-outline-light"  onclick="this.form.submit();">EVET</button>
+
+                        <button type="button" class="btn btn-outline-light"  data-dismiss="modal">HAYIR</button>
+                      </form>
+                    </div>
+                  </div>
+                  <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+              </div>
+
+              {% endfor %}
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+  $(function () {
+   
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": false, "iDisplayLength": 25,  "order": [[5, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+  });
+</script>
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+
+
+
+{% endblock %}

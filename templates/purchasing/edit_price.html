@@ -1,0 +1,510 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-muted">Satın Alma Fiyat Güncelleme</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+                        <li class="breadcrumb-item active">Satın Alma</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Default box -->
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Malzeme Adı</label>
+                                <input type="text" value="{{order.material.name}}" class="form-control" cols="40"
+                                    disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Miktar</label>
+                                <input type="text" value="{{order.quantity}} {{order.material.measurement_type.name}}"
+                                    class="form-control" cols="40" disabled>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Kullanıcı Email</label>
+                                <input type="text" value="{{order.order.user.email}}" class="form-control" cols="40"
+                                    disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Tarih</label>
+                                <input type="text" value="{{order.order.created_at|date:"Y-m-d H:i"}}"
+                                    class="form-control" cols="40" disabled>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Genel Not</label>
+                                <textarea id="note" name="note" class="form-control"
+                                    disabled>{{ order.order.note }}</textarea>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="text-muted">Not</label>
+                                <textarea id="note" name="note" class="form-control"
+                                    disabled>{{ order.note }}</textarea>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <form action="{% url 'purchasing_edit_price' order.id %}" method="POST"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if price_list%}
+                            {% for object in price_list %}
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="text-success">
+
+                                        {{ forloop.counter }}. Şİrket
+                                    </h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <label class="text-muted">{{ forloop.counter }}. Şİrket </label>
+                                                <select class="form-control select2" style="width: 100%;"
+                                                    id="company_{{forloop.counter}}" name="company_{{forloop.counter}}">
+                                                    <option value="0"> Lütfen Şirket Seçiniz...</option>
+                                                    {% for company in company_list %}
+                                                    <option value="{{company.id}}" {% if company.id == object.company_id %}
+                                                    selected={{company.id}}{% endif %}> {{company.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Birim Fiyat</label>
+                                                <input type="number" step="any" id="price_{{forloop.counter}}"
+                                                    name="price_{{forloop.counter}}" class="form-control"
+                                                    value="{{object.price}}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Para Birim</label>
+                                                <select id="money_{{forloop.counter}}" name="money_{{forloop.counter}}"
+                                                    class="form-control" onchange="money_check('{{forloop.counter}}')">
+                                                    {% for money in money_list %}
+                                                    <option value="{{money.id}}"
+                                                        {% if money.id == object.money_id %}selected={{ money.id }}{% endif %}>
+                                                        {{money.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        {%if object.money_rate_price > 1%}
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group" id="dv_{{forloop.counter}}" >
+                                                <div class="form-group">
+                                                    <label class="text-muted">Son Kur</label>
+                                                    <input type="number" step="any"
+                                                        id="money_rate_price_{{forloop.counter}}"
+                                                        name="money_rate_price_{{forloop.counter}}" class="form-control"
+                                                        value="{{object.money_rate_price}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%else%}
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group" id="dv_{{forloop.counter}}" style="display: none">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Son Kur</label>
+                                                    <input type="number" step="any"
+                                                        id="money_rate_price_{{forloop.counter}}"
+                                                        name="money_rate_price_{{forloop.counter}}" class="form-control"
+                                                        value="{{object.money_rate_price}}" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endif%}
+
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Ödeme Notu</label>
+                                                <input type="text" id="paying_note_{{forloop.counter}}"
+                                                    name="paying_note_{{forloop.counter}}" class="form-control"
+                                                    value="{{object.paying_note}}">
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Genel Not</label>
+                                                <input type="text" id="note_{{forloop.counter}}"
+                                                    name="note_{{forloop.counter}}" class="form-control"
+                                                     value="{{object.note}}">
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                
+                                                {% if object.info_file %}
+                                                <label class="text-muted">Yüklü Dosya</label>
+                                                <a  class="btn btn-block btn-outline-success" href="../../../media/{{object.info_file}}" target="_blank">Tıklayın</a>
+                                                {% else %}
+                                                <label class="text-muted">Dosya Yükle</label>
+                                                <input type="file" id="info_file_{{forloop.counter}}"
+                                                    name="info_file_{{forloop.counter}}" class="form-control"
+                                                    accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('info_file_{{forloop.counter}}')" />
+                                                {% endif %}
+                                            
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted"> Satın Alma Tarafından Önerilen</label>
+                                                <br>
+                                                <input type="checkbox" id="checkbox_{{forloop.counter}}"
+                                                    name="checkbox_{{forloop.counter}}" {%if object.is_offered%} checked {%endif%}
+                                                    onclick="uncheckAllExceptSelected(this.id)"> Seçili Firma
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+                        {% endif %}
+
+                        
+                        {% if new_price_list_range is not None %}
+                            {% for i in new_price_list_range %}
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="text-success">
+
+                                        {{ i }}. Şİrket
+                                    </h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <label class="text-muted">{{ i }}. Şİrket </label>
+                                                <select class="form-control select2" style="width: 100%;"
+                                                    id="company_{{i}}" name="company_{{i}}">
+                                                    <option value="0"> Lütfen Şirket Seçiniz...</option>
+                                                    {% for company in company_list %}
+                                                    <option value="{{company.id}}"> {{company.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Birim Fiyat</label>
+                                                <input type="number" step="any" id="price_{{i}}"
+                                                    name="price_{{i}}" class="form-control"
+                                                    value="0" required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Para Birim</label>
+                                                <select id="money_{{i}}" name="money_{{i}}"
+                                                    class="form-control" onchange="money_check('{{i}}')">
+                                                    {% for money in money_list %}
+                                                    <option value="{{money.id}}"
+                                                        {% if money.id == object.money_id %}selected={{ money.id }}{% endif %}>
+                                                        {{money.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-sm-2 col-md-2 col-12">
+                                            <div class="form-group" id="dv_{{i}}" style="display: none">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Son Kur</label>
+                                                    <input type="number" step="any"
+                                                        id="money_rate_price_{{i}}"
+                                                        name="money_rate_price_{{i}}" class="form-control"
+                                                        value="{{object.money_rate_price}}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Ödeme Notu</label>
+                                                <input type="text" id="paying_note_{{i}}"
+                                                    name="paying_note_{{i}}" class="form-control">
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Genel Not</label>
+                                                <input type="text" id="note_{{i}}"
+                                                    name="note_{{i}}" class="form-control">
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted">Dosya Yükle</label>
+                                                <input type="file" id="info_file_{{i}}"
+                                                    name="info_file_{{i}}" class="form-control"
+                                                    accept=".pdf,.jpeg,.jpg" onchange="Filevalidation('info_file_{{i}}')" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label class="text-muted"> Satın Alma Tarafından Önerilen</label>
+                                                <br>
+                                                <input type="checkbox" id="checkbox_{{i}}"
+                                                    name="checkbox_{{i}}"
+                                                    onclick="uncheckAllExceptSelected(this.id)"> Seçili Firma
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+
+
+                            {% endfor %}
+                        {% endif %}
+
+
+                        <div class="col-md-3 col-sm-3 col-12">
+                            <div class="form-group">
+                                <button name="submit" type="submit" class="btn btn-primary">Güncelle</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+            </div>
+            <!-- /.card -->
+        </div>
+</div>
+</section>
+
+
+</div>
+<!-- /.content -->
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script>
+    Filevalidation = (name) => {
+
+        const name_id = name
+        const fi = document.getElementById(name);
+        // Check if any file is selected.
+        if (fi.files.length > 0) {
+            for (const i = 0; i <= fi.files.length - 1; i++) {
+
+                const fsize = fi.files.item(i).size;
+                const name = fi.files.item(i).name
+                const file = Math.round((fsize / 1024));
+
+                if (!name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('.jpg') && !name
+                    .toLowerCase()
+                    .endsWith('.jpeg')) {
+                    alert(name + " Sadece PDF ve JPEG dosyaları yüklenebilir!");
+                    document.getElementById(name_id).value = "";
+                    document.getElementById(name_id).innerHTML = "";
+                    return "NOK"
+                }
+
+                return "OK"
+            }
+        }
+    }
+</script>
+
+<script>
+    function uncheckAllExceptSelected(checkboxId) {
+        // Get all the checkboxes
+        var checkboxes = document.querySelectorAll('input[type=checkbox]');
+
+        // Loop through each checkbox and uncheck it if it's not the selected one
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox.id !== checkboxId) {
+                checkbox.checked = false;
+            }
+        });
+    }
+</script>
+
+
+
+
+
+<script type="text/javascript">
+    money_check = (number) => {
+
+        money = "#money_" + number
+        dv_ = "#dv_" + number
+        var val = parseInt($(money).val())
+        if (val > 1) {
+            $(dv_).show()
+        } else {
+            $(dv_).hide()
+        }
+
+    }
+</script>
+
+
+<script type="text/javascript">
+
+    $('form').on('submit', function() {
+      
+      let company_1 = document.getElementById("company_1");
+      if (company_1.options[company_1.selectedIndex].value == 0) {
+        alert("Lütfen 1. Firmayı Seçiniz...!");
+        $(company_1).focus();
+        return false;
+      }
+    
+      let company_selected = false;
+      
+      for (let i = 1; i < 7; i++) {
+        
+        let company_id = "company_" + i;
+        
+        let mat = document.getElementById(company_id);
+        let company_data = mat.options[mat.selectedIndex].value;
+          
+        if (company_data > 0) {
+          company_selected = true;
+          let price_ = "#price_" + i;
+          let money_rate_price_ = "#money_rate_price_" + i;
+          let money_ = "#money_" + i;
+        
+          
+          if (parseFloat($(price_).val()) <= 0) {
+            alert("Lütfen " + i + ". malzeme için Birim Fiyat bilgisi giriniz...!");
+            $(price_).focus();
+            return false;
+          }
+           
+          if (parseInt($(money_).val()) > 1 && parseFloat($(money_rate_price_).val()) == 1) {
+            alert("Lütfen " + i + ". şirket için Son Kur bilgilerini kontrol ediniz...!");
+            $(money_rate_price_).focus();
+            return false;
+          }
+        }
+      }
+    
+      if (company_selected == false) {
+        alert("Lütfen en az bir tane Firma girişi yapınız...!");
+        $("#company_1").focus();
+        return false;
+      }
+      
+      Swal.fire({
+        title: 'Güncelleniyor...',
+        html: 'Lütfen Bekleyiniz...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    });
+          
+    </script>
+    
+    
+    
+      
+
+
+{% endblock %}

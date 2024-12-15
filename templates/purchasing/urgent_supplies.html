@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        <h1 class="card-title text-success"> Siparişi Alınmış Acil Üretim için Gerekli olan Malzemelerin TOPLAM Miktarları listelenmiştir. </h1>
+        <br>
+        <h1 class="card-title text-success"> Detaylar için Lütfen Malzeme Adına Tıklayınız... </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <form id="demoform" >
+          {% csrf_token %}  
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="text-muted">Malzeme Adı</th>
+                <th class="text-muted">Toplam Miktar</th>
+                <th class="text-muted">İşlem</th>
+                {% comment %} <th class="text-muted">Not</th>
+                <th class="text-muted">Durum</th>
+                <th class="text-muted">İşlem</th> {% endcomment %}
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for object in material_list %}
+
+              <tr id="tr_{{object.material_id}}">
+                <td> <a href="{% url 'urgent_supplies_details' object.material_id %}"> {{object.material__name}}</a></td>
+                <td>{{object.total_quantity|floatformat:2}} {{object.material__measurement_type__name}} </td>
+                <td>
+                  <button class="btn btn-outline-success" type="button" title="Alındı Olarak Güncelle" 
+                  ondblclick="change_status({{object.material_id}})">Güncelle</button>
+                </td>
+                {% endfor %}
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+  </section>
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+<script>
+  change_status = (id) => {
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  
+  var material_id = id
+  var user_name = "{{ user_name }}"
+  var url = "{% url 'update_urgent_material_status' %}"
+  var csrftoken = getCookie('csrftoken');
+
+      
+  function sendData(){
+    fetch(url, {
+      method : "POST",
+      headers: {
+        "Content-type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        material_id: material_id,
+        
+      }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+     
+
+     if (data.is_updated==1)
+     {
+        Toast.fire({
+          icon: data.icon,
+          title: data.message_str
+        })
+        var rowId = "tr_"+id
+       
+        var row = document.getElementById(rowId);
+        row.parentNode.removeChild(row);
+        
+
+        
+     }
+
+  
+    });
+  }
+  sendData();
+   
+
+  }
+</script>
+
+<script>
+  $(function () {
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": false, "iDisplayLength": 25,  "order": [[2, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+
+  });
+</script>
+
+
+
+
+{% endblock %}

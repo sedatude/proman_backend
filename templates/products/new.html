@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="text-muted"> Yeni Ürün Kaydı</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Anasayfa</a></li>
+              <li class="breadcrumb-item active">Ürün İşlemleri</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+<section class="content">
+
+   <div class="card-body">
+    <div class="col-sm-6 col-12">
+      <form action="{% url 'new_product' %}" method="POST"enctype="multipart/form-data">
+          {% csrf_token %}
+        <div class="form-group">
+          <label class="text-muted">Ürün Tipi Seçiniz</label> 
+          <div>
+            <select id="type_id" name="type_id" required="required" class="custom-select">
+              <option value="0">  Lütfen Ürün Tipi Seçiniz...</option>
+              {% for type in type_list %}
+              <option value="{{type.id}}" {% if type_id == type.id %}selected={{ type.id }}{% endif %}>
+                {{type.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+       
+
+        <div class="form-group">
+          <label class="text-muted">Ürün Adı</label> 
+          <textarea id="name" name="name" cols="40" rows="1" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Ölçü Birimi(ML)</label> 
+          <input type="number" id="meter" name="meter"  rows="1" class="form-control" required>
+        </div>
+
+        {% comment %} <div class="form-group">
+          <label for="package_weight">Yoğunluk(KG) </label> 
+          <input type="number" id="density" step="any" name="density" rows="1" class="form-control" value ="1.2" required>
+        </div> {% endcomment %}
+       
+        <div class="form-group">
+          <label class="text-muted">Açıklama</label> 
+          <textarea id="description" name="description" cols="40" rows="2" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Barkod </label> 
+          <textarea id="barcode" name="barcode" rows="1" class="form-control" required></textarea>
+        </div>
+
+      
+
+        <div class="form-group">
+          <label class="text-muted">Koli Adet </label> 
+          <input type="number"  id="package_quantity" name="package_quantity"   rows="1" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Koli Ağırlık </label> 
+          <input type="number" id="package_weight" step="any" name="package_weight" rows="1" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Palet Adet </label> 
+          <input type="number" id="palette_quantity" name="palette_quantity" rows="1" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Palet Ağırlık </label> 
+          <input type="number" id="palette_weight" step="any" name="palette_weight" rows="1" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="text-muted">Hammadde Ağırlık </label> 
+          <input type="number" id="internal_weight" step="any" name="internal_weight" rows="1" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="text-muted">Ambalaj Ağırlık </label> 
+          <input type="number" id="external_weight" step="any" name="external_weight" rows="1" class="form-control" required>
+        </div>
+        
+        
+        
+        <div class="form-group">
+          <label class="text-muted">Vergi(%) </label> 
+          <input type="number" id="vat" name="vat" step="any" rows="1" class="form-control" value="0.18" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Fiyat </label> 
+          <input type="number" id="price" name="price" step="any" rows="1" class="form-control" required>
+        </div>
+
+      
+
+        <div class="form-group">
+          <label class="text-muted">Market Fiyat </label> 
+          <input type="number" id="price_market" name="price_market" step="any" cols="40" rows="3" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Toplam Üretim(1 Tır) </label> 
+          <input type="number" id="total_production" name="total_production" cols="40" rows="3" class="form-control" value="0" required>
+        </div>
+
+        <div class="form-group">
+          <label class="text-muted">Uyarı Limiti </label> 
+          <input type="number" id="limit" name="limit" cols="40" rows="3" class="form-control" value="10000" required>
+        </div>
+
+
+        <div class="form-group">
+          <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>
+
+
+    </div>
+      </div>
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+  
+
+ 
+{% endblock %}
+
+
+
+
+
+{% block javascript%}
+
+<script type="text/javascript">
+
+$('form').on('submit', function(){
+
+  type_id = document.getElementById("type_id");
+  if (type_id.options[type_id.selectedIndex].value == 0){
+      alert("Lütfen Ürün Tipini Seçiniz...!");
+      $(type_id).focus();
+        return false;}
+
+
+ 
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+})
+  
+  </script>
+
+
+{% endblock %}
+
+

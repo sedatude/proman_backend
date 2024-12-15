@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-muted">Satın Alma Firma Onayı</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+                        <li class="breadcrumb-item active">Satın Alma</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Default box -->
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="col-sm-12 col-md-12">
+
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Satın Alma Sorumlusu</label>
+                                    <input type="text" value="{{material_order.order.user.email}}" class="form-control" cols="40" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Giriş Tarihi</label>
+                                    <input type="text" value="{{material_order.order.created_at|date:"Y-m-d H:i"}}"
+                                        class="form-control" cols="40" disabled>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Genel Açıklama</label>
+                                    <textarea id="note" name="note" class="form-control"
+                                        disabled>{{ material_order.order.note }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Malzeme Adı</label>
+                                    <input type="text" value="{{material_order.material.name}}(KDV:{{material_order.material.vat}})" class="form-control" cols="40" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="text-muted">Miktar</label>
+                                    <input type="text" value="{{material_order.quantity}} {{material_order.material.measurement_type.name}}"
+                                        class="form-control" cols="40" disabled>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                </div>
+                <hr>
+
+                <div >
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                            
+                                <th class="text-muted">Firma</th>
+                                <th class="text-muted">Birim Fiyat</th>
+                                <th class="text-muted">KDV Tutarı</th>
+                                <th class="text-muted">Mal Hizmet Tutarı</th>
+                                <th class="text-muted">Toplam</th>
+                                <th class="text-muted">Ödeme Not</th>
+                                <th class="text-muted">Genel Not</th>
+                                <th class="text-muted">Dosya</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for material in price_list %}
+                                {% if material.is_offered %}
+                                <tr class="text-success">
+                                {%else%}
+                                <tr class="text-warning">
+                                {%endif%} 
+                                <td>{{material.company__name}}</td>
+                                <td>{{material.price}} {{material.money__short}} </td>
+                                <td>{{material.vat_total}} {{material.money__short}} </td>
+                                <td>{{material.price_total}} {{material.money__short}} </td>
+                                <td>{{material.amount}} {{material.money__short}} </td>
+                                <td>{{material.paying_note}} </td>
+                                <td>{{material.note}} </td>
+                                <td>
+                                    {% if material.info_file %}
+                                    <a class="btn btn-block btn-outline-success" href="../../../media/{{material.info_file}}"
+                                      target="_blank">Tıklayın</a>
+                                    {% else %}
+                                    <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                                    {% endif %}
+                                </td>
+                                
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-3"><span class="text-sm badge bg-success">Satın Alma Tarafından Önerildi    </span> </div>
+                    <div div class="col-sm-3"><span class="text-sm badge bg-warning">Satın Alma Tarafından Önerilmedi </span> </div>
+                </div>
+                <br>
+                <hr>
+                
+               
+                <div class="card-header">
+                    <h3 class="text-warning"> Lütfen İşlem Yapınız</h3>
+                </div>
+              
+                <div class="card-body">
+                    <form action="{% url 'purchasing_manager_confirmation' material_order.id %}" method="POST" enctype="multipart/form-data">
+                            
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                
+                                <select class="form-control select2" style="width: 100%;" id="selected_company" name="selected_company" >
+                                    <option class="text-muted" value="0"> Lütfen Şirket Seçiniz...</option>
+                                    {% for price in price_list %}
+                                    <option class="text-muted" value="{{price.company_id}}"> {{price.company__name}}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-3 col-sm-3">
+                                <div class="form-group">
+                        
+                                    <button name="confirm" type="submit" value="1" class="btn btn-success">Onayla</button>
+                                    </div>
+                            </div>
+            
+                            <div class="col-md-3 col-sm-3">
+                                <div class="form-group">
+                            
+                                    <button name="reject" type="submit" value="0" class="btn btn-danger">İptal Et</button>
+                                    </div>
+                            </div>
+                           
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 col-sm-8">
+                                <div class="form-group">
+                                  <label class="text-muted">Not</label>
+                                  <textarea id="note" name="note" class="form-control"
+                                  placeholder="Lütfen açıklama giriniz..."></textarea>
+                                </div>
+                              </div>
+                        </div>
+                    </form>
+                    
+                </div>
+              
+              </div> 
+
+              
+             
+
+            </div>
+            <!-- /.card -->
+            
+        </div>
+    </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+
+
+<script>
+    $(function () {
+
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": false, // disable length change menu
+            "searching": false, // disable search field
+            "autoWidth": false,
+            "paging": false, // disable pagination
+            "info": false, // disable the "Showing x to y of z entries" message
+            "order": [
+                [0, "desc"]
+            ],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    });
+
+
+
+    
+</script>
+
+
+
+
+<script type="text/javascript">
+    $('form').on('submit', function () {
+        //if ($('button[name="confirm"]').is(":focus") || $('button[name="reject"]').is(":focus")) {
+        if ($('button[name="confirm"]').is(":focus") ) {
+            if ($('#selected_company').val() <= 0) {
+                alert("Lütfen Şirket seçiniz!");
+                return false;
+            }
+        }
+  
+   
+      Swal.fire({
+        title: 'Güncelleniyor...',
+        html: 'Lütfen Bekleyiniz...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading()
+        }
+      });
+  
+    })
+</script>
+ 
+
+
+{% endblock %}

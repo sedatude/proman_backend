@@ -1,0 +1,633 @@
+{% load static %}
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+  <!-- Brand Logo -->
+  <div class="brand-link">
+    <img src="{% static '../media/main_logo.png' %}" alt="Logo" class="brand-image img-rounded left" style="opacity: .8">
+    <span class="brand-text font-weight-light">&nbsp;</span>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img src="{{userprofile.profile_picture.url}}" class="rounded-circle" alt="User Image"
+          style="border-radius: 10px;">
+      </div>
+      <div class="info">
+        <a href="#" class="d-block">{{ user.full_name}}</a>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+           with font-awesome or any other icon font library -->
+        <li class="nav-item">
+          <a href="{% url 'dashboard' %}" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>
+              Anasayfa
+
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <i class="fas fa-table nav-icon"></i>
+
+            <p>
+              Şirketler
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'purchasing' %}" class="nav-link">
+                <i class="fas fa-money-check-dollar nav-icon"></i>
+
+                <p>Satın Alma</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'logistic' %}" class="nav-link">
+
+                <i class="fa-solid fa-car nav-icon"></i>
+                <p>Lojistik</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'distributor' %}" class="nav-link">
+                <i class="fa-solid fa-building-circle-arrow-right nav-icon"></i>
+                <p>Distribütör</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'company_processes' %}" class="nav-link">
+                <i class="fa-solid fa-pen nav-icon"></i>
+                <p>Şirket İşlemleri</p>
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+
+        {% comment %} <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <i class="fa-solid fa-object-group nav-icon"></i>
+
+            <p>
+              Malzemeler
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'materials' %}" class="nav-link">
+                <i class="nav-icon fa-solid fa-object-group"></i>
+                <p>Malzeme Listesi</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'material_processes' %}" class="nav-link">
+                <i class="fa-solid fa-pen nav-icon"></i>
+                <p>Malzeme İşlemleri</p>
+              </a>
+            </li>
+
+           
+
+          </ul>
+        </li> {% endcomment %}
+
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <!-- <i class="fas fa-table nav-icon"></i> -->
+
+            <i class="fa-solid fa-pump-soap nav-icon"></i>
+
+            <p>
+              Ürünler
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'product_dashboard' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-pump-soap nav-icon"></i>
+                <p>Ürün Listesi</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'product_processes' %}" class="nav-link">
+                <i class="fa-solid fa-pen nav-icon"></i>
+                <p>Ürün İşlemleri</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'product_materials_total' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-file-lines nav-icon"></i>
+                <p>Reçete</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'product_stock' %}" class="nav-link">
+
+                <!-- <i class="fa-solid fa-car"></i> -->
+                <i class="fa-solid fa-check-to-slot nav-icon"></i>
+                <p>Stok Durumu</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'materials' %}" class="nav-link">
+                <i class="nav-icon fa-solid fa-object-group"></i>
+                <p>Malzeme Listesi</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'material_processes' %}" class="nav-link">
+                <i class="fa-solid fa-pen nav-icon"></i>
+                <p>Malzeme İşlemleri</p>
+              </a>
+            </li>
+
+
+
+
+
+
+          </ul>
+        </li>
+
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <!-- <i class="fas fa-table nav-icon"></i> -->
+
+            <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+
+            <p>
+              Depo
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'store' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-file-lines nav-icon"></i>
+                <p>Son Kayıtlar</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'store_new' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-file-lines nav-icon"></i>
+                <p>Yeni Kayıt</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'pending_store_new' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+
+                <i class="fa-solid fa-calendar-check nav-icon"></i>
+
+                <p>Depo Onay</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'pending_store_check' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-calendar-check nav-icon"></i>
+
+                <p>Finans Onay</p>
+              </a>
+            </li>
+
+
+
+
+
+          </ul>
+        </li>
+
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <!-- <i class="fas fa-table nav-icon"></i> -->
+
+            <i class="fa-solid fa-hands-holding-circle nav-icon"></i>
+
+            <p>
+              Üretim
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'production' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-file-lines nav-icon"></i>
+                <p>Son Kayıtlar</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'new_acceptment' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+                <i class="fa-solid fa-file-lines nav-icon"></i>
+                <p>Yeni Kayıt</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'pending_acceptment_store' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+
+
+                <i class="fa-solid fa-calendar-check nav-icon"></i>
+
+                <p>Depo Onay</p>
+              </a>
+            </li>
+
+
+            <li class="nav-item">
+              <a href="{% url 'pending_acceptment_production' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+                <i class="fa-solid fa-calendar-check nav-icon"></i>
+
+                <p>Üretim Onay</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'pending_acceptment_filling' %}" class="nav-link">
+                <!-- <i class="fas fa-money-check-dollar"></i> -->
+                <i class="fa-solid fa-calendar-check nav-icon"></i>
+
+                <p>Dolum Onay</p>
+              </a>
+            </li>
+
+
+
+
+
+          </ul>
+        </li>
+
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <!-- <i class="fas fa-table nav-icon"></i> -->
+
+
+            <i class="fa-solid fa-hand-holding-dollar nav-icon"></i>
+            <p>
+              Satış Pazarlama
+            </p>
+            <i class="right fas fa-angle-left"></i>
+
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'selling' %}" class="nav-link">
+
+                <!-- <i class="fa-solid fa-car"></i> -->
+                <i class="fa-solid fa-check-to-slot nav-icon"></i>
+                <p>Stok Durumu</p>
+              </a>
+            </li>
+             <li class="nav-item">
+              <a href="{% url 'selling_orders' %}" class="nav-link">
+
+                <i class="fa-solid fa-table-cells nav-icon"></i>
+                <p>Siparişler</p>
+              </a>
+            </li>  
+            
+             <li class="nav-item">
+              <a href="{% url 'new_selling_order' %}" class="nav-link">
+                <i class="fa-solid fa-money-bill-trend-up nav-icon"></i>
+                <p>Yeni Sipariş</p>
+              </a>
+            </li>  
+             {% comment %} <li class="nav-item">
+              <a href="{% url 'selling_business_calender' %}" class="nav-link">
+
+                <i class="fa-solid fa-calendar-days nav-icon"></i>
+                <p>Çalışma Programı</p>
+              </a>
+            </li>   {% endcomment %}
+
+             {% comment %} <li class="nav-item">
+              <a href="{% url 'selling_new_business_calender'  %}" class="nav-link">
+
+                <i class="fa-solid fa-calendar-days nav-icon"></i>
+                <p>Çalışma Programı</p>
+              </a>
+            </li>   {% endcomment %}
+
+
+
+          </ul>
+        </li>
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <!-- <i class="fas fa-table nav-icon"></i> -->
+
+            <i class="fa-solid fa-cart-arrow-down nav-icon"></i>
+            <p>
+              Satın Alma
+            </p>
+            <i class="right fas fa-angle-left"></i>
+
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'urgent_supplies' %}" class="nav-link">
+
+                <i class="fa-solid fa-truck-medical nav-icon"></i>
+                <p>Acil Siparişler</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'material_stock' %}" class="nav-link">
+
+                <!-- <i class="fa-solid fa-car"></i> -->
+                <i class="fa-solid fa-check-to-slot nav-icon"></i>
+                <p>Malzeme-Stok</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'selling_orders' %}" class="nav-link">
+
+                <i class="fa-solid fa-table-cells nav-icon"></i>
+                <p>Siparişler</p>
+              </a>
+            </li>  
+            
+             <li class="nav-item">
+              <a href="{% url 'new_selling_order' %}" class="nav-link">
+                
+                <i class="fa-solid fa-money-check-dollar nav-icon"></i>
+                <p>Yeni Sipariş</p>
+              </a>
+            </li>  
+          
+          </ul>
+        </li>
+
+        <li class="nav-item menu">
+          
+          <a href="#" class="nav-link">
+            <i class="fa-solid fa-truck nav-icon"></i>
+            
+            <p>
+              Lojistik
+            </p>
+            
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'logistic_dash' %}" class="nav-link">
+
+                <i class="fa-solid fa-truck-front nav-icon"></i>
+                <p>Son Kayıtlar</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'logistic_last_shipment' %}" class="nav-link">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <p>Son Kargolar</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'logistic_new_shipment' %}" class="nav-link">
+                
+                <i class="fa-solid fa-truck-ramp-box nav-icon"></i>
+                <p>Kargo Hazırla</p>
+              </a>
+            </li>
+          
+          </ul>
+        </li>
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fa-solid fa-calculator"></i>
+
+            <p>
+              Muhasebe
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'accounting_revenues' %}" class="nav-link">
+                {% comment %} <i class="nav-icon fa-solid fa-wine-glass"></i> {% endcomment %}
+                <i class="nav-icon fa-solid fa-money-bill-trend-up"></i>
+                <p>Siparişler</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'accounting_materials' %}" class="nav-link">
+                {% comment %} <i class="nav-icon fa-solid fa-wine-glass-empty"></i> {% endcomment %}
+                {% comment %} <i class="nav-icon fa-solid fa-magnifying-glass-dollar"></i> {% endcomment %}
+                <i class="nav-icon fa-solid fa-object-group"></i>
+                <p>Malzemeler</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'accounting_logistic' %}" class="nav-link">
+                {% comment %} <i class="nav-icon fa-solid fa-wine-glass-empty"></i> {% endcomment %}
+                {% comment %} <i class="nav-icon fa-solid fa-magnifying-glass-dollar"></i> {% endcomment %}
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <p>Nakliye</p>
+              </a>
+            </li>
+
+            {% comment %} <li class="nav-item">
+              <a href="{%url 'product_material_price'%}" class="nav-link">
+                <i class="fa-solid fa-building-circle-arrow-right nav-icon"></i>
+                <p>Üretim Maliyet</p>
+              </a>
+            </li> {% endcomment %}
+
+          </ul>
+        </li>
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+
+            <p>
+              Raporlar
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{% url 'calc' %}" class="nav-link">
+                <i class="nav-icon fa-solid fa-pump-soap"></i>
+
+                <p>Maliyet-Satış</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'material_price_stock' %}" class="nav-link">
+
+                <i class="fa-solid fa-car nav-icon"></i>
+                <p>Malzeme-Fiyat</p>
+              </a>
+            </li>
+
+            {% comment %} <li class="nav-item">
+              <a href="{%url 'product_material_price'%}" class="nav-link">
+                <i class="fa-solid fa-building-circle-arrow-right nav-icon"></i>
+                <p>Üretim Maliyet</p>
+              </a>
+            </li> {% endcomment %}
+
+          </ul>
+        </li>
+
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-address-card"></i>
+            <p>
+              Profil
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{% url 'edit_profile' %}" class="nav-link">
+                <i class="nav-icon fas fa-edit"></i>
+                <p>
+                  Profil Güncelle
+
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'change_password' %}" class="nav-link">
+                <i class="nav-icon fas fa-pen"></i>
+                <p>
+                  Şifre Değiştir
+
+                </p>
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+        <li class="nav-item menu">
+          <a href="#" class="nav-link">
+
+            <i class="nav-icon fa-solid fa-user-pen"></i>
+            <p>
+              Kullanıcı İşlemleri
+            </p>
+            <i class="right fas fa-angle-left"></i>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{% url 'new_user' %}" class="nav-link">
+                <i class="nav-icon fa-solid fa-plus"></i>
+                <p>
+                  Yeni Kullanıcı
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'users' %}" class="nav-link">
+                <i class="nav-icon fas fa-address-card"></i>
+                <p>
+                  Kullanıcı Güncelle
+                </p>
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+
+
+
+
+
+
+        <li class="nav-item">
+          <a href="{% url 'logout' %}" class="nav-link">
+            <i class="nav-icon fas fa-sign-out-alt"></i>
+            <p>
+              Çıkış
+            </p>
+          </a>
+        </li>
+
+
+
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

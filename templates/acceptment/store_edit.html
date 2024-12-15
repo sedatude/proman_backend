@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Malzeme Kaydı Güncelleme</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Kayıt Güncelleme</li>
+            
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+       
+
+      <div class="card-body">
+
+        <div class="col-md-12">
+          <form action="{% url 'store_update' shipin.id %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+ 
+
+           
+            
+
+      
+
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="company_1">Gönderen Firma  </label>
+                  <!-- <input type="text" id="company_1" name="company_1" class="form-control" required></text> -->
+                  <select class="form-control select2" style="width: 100%;"  id="company_1" name="company_1" required>
+                  
+                    {% for company in company_list %}
+                      <option value="{{company.id}}" {% if company.id == shipin.company_id %}selected={{ company.id }}{% endif %} > {{company.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="despatch_number_label">İrsaliye No</label>
+                  <input type="text" id="despatch_number" name="despatch_number" class="form-control" cols="40" value="{{ shipin.despatch_number }}"> 
+                  
+                </div>
+              </div>
+
+              <!-- <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="company_logistic_label">Nakliye Firması</label>
+                  <input type="text" id="company_logistic" name="company_logistic" class="form-control" cols="40" required> 
+                </div>
+              </div> -->
+
+             
+
+
+            </div>
+
+            <div class="row">
+              <div class="col-sm-8">
+                <div class="form-group">
+                  <label for="note">Açıklama</label>
+                  {% if shipin.note|length > 0 %}
+                    <textarea id="note" name="note" class="form-control" placeholder="Lütfen açıklama giriniz...">{{ shipin.note }}</textarea>
+                  {% else %}
+                    <textarea id="note" name="note" class="form-control" placeholder="Lütfen açıklama giriniz..."></textarea>
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+            <hr>
+
+            {% for stock in stock_list %}
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="material_{{forloop.counter}}_label">{{ forloop.counter }}. Malzeme </label>
+                    <select class="form-control select2" style="width: 100%;"  id="material_{{forloop.counter}}" name="material_{{forloop.counter}}" >
+                      {% for mat in material_list %}
+                        <option value="{{mat.id}}" {% if mat.id == stock.material__id %} selected={{mat.id}}{% endif %}> {{mat.name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="quantity_{{forloop.counter}}_label">Miktar/Adet</label>
+                    <input type="text" id="quantity_{{forloop.counter}}" name="quantity_{{forloop.counter}}" class="form-control" cols="40" value="{{stock.quantity}}" required>
+                  </div>
+                </div>
+                
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="plus_{{forloop.counter}}_label">Fazla Miktar</label>
+                    {% if stock.quantity_extra > 0 %}
+                    <input type="text" id="plus_{{forloop.counter}}" name="plus_{{forloop.counter}}" class="form-control" value="{{stock.quantity_extra}}" cols="40" required>
+                    {%else%}
+                    <input type="text" id="plus_{{forloop.counter}}" name="plus_{{forloop.counter}}" class="form-control" value="0" cols="40" required>
+                    {%endif%}
+                  </div>
+                </div>
+
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="minus_{{forloop.counter}}_label">Eksik Miktar</label>
+                    
+                    {% if stock.quantity_extra < 0 %}
+                    <input type="text" id="minus_{{forloop.counter}}" name="minus_{{forloop.counter}}" class="form-control" value="{{stock.quantity_extra}}" cols="40" required>
+                    {%else%}
+                    <input type="text" id="minus_{{forloop.counter}}" name="minus_{{forloop.counter}}" class="form-control" value="0" cols="40" required>
+                    {%endif%}
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="note_{{forloop.counter}}_label">Not</label>
+                    <input type="text" id="note_{{forloop.counter}}" name="note_{{forloop.counter}}" class="form-control" cols="40" value="{{stock.note}}" placeholder="Sorun var ise bildiriniz.">
+                  </div>
+                </div>
+
+              </div>
+            {% endfor %}
+
+            {% for i in material_range %}
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="material_{{i}}_label">{{i}}. Malzeme</label>
+                    <select class="form-control select2" style="width: 100%;"  id="material_{{i}}" name="material_{{i}}" >
+                      <option value="0">  Lütfen Ürün Seçiniz...</option>
+                      {% for material in material_list %}
+                        <option value="{{material.id}}"> {{material.name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="quantity_{{i}}_label">Miktar/Adet</label>
+                    <input type="text" id="quantity_{{i}}" name="quantity_{{i}}" class="form-control" cols="40" value="0" required>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="plus_{{i}}_label">Fazla Miktar</label>
+                    <input type="text" id="plus_{{i}}" name="plus_{{i}}" class="form-control" value="0" cols="40" required>
+                  </div>
+                </div>
+
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label for="minus_{{i}}_label">Eksik Miktar</label>
+                    <input type="text" id="minus_{{i}}" name="minus_{{i}}" class="form-control" value="0" cols="40" required>
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="note_{{i}}_label">Not</label>
+                    <input type="text" id="note_{{i}}" name="note_{{i}}" class="form-control" cols="40" placeholder="Sorun var ise bildiriniz.">
+                  </div>
+                </div>
+
+              </div>
+            {% endfor %}
+
+
+        
+
+
+            <div class="col-md-3 col-sm-3 col-12">
+              <div class="form-group">
+                <button name="submit" type="submit" class="btn btn-primary">Güncelle</button>
+              </div>
+          </form>
+
+        
+        </div>
+
+
+
+
+      </div>
+    </div>
+    <!-- /.card -->
+
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+      
+      const name_id = name
+      const fi = document.getElementById(name);
+      // Check if any file is selected.
+      if (fi.files.length > 0) {
+          for (const i = 0; i <= fi.files.length - 1; i++) {
+
+              const fsize = fi.files.item(i).size;
+              const name = fi.files.item(i).name
+              const file = Math.round((fsize / 1024));
+              
+              if (name.endsWith('.pdf')== false) {
+                alert("Sadece PDF dosyaları yüklenebilir!");
+                document.getElementById(name_id).value = "";
+                document.getElementById(name_id).innerHTML = "";
+                 
+               
+                return "NOK"
+              }
+              else if (file >= 2048) {
+                  alert(
+                    "Dosya boyutu çok büyük En fazla 2 Megabyte yükleyebilirsiniz.");
+                    console.log("else if (file >= 2048) {")
+                    return "NOK"
+              } 
+                return "OK"
+          }
+      }
+  }
+</script>
+
+
+<script type="text/javascript">
+  
+
+
+$('form').on('submit', function(){
+
+  company_1 = document.getElementById("company_1");
+  if (company_1.options[company_1.selectedIndex].value == 0){
+      alert("Lütfen Gönderen Firmayı Seçiniz...!");
+      $(company_1).focus();
+        return false;}
+ 
+
+
+
+  let material_selected = false;
+
+  for (let i = 1; i < 16; i++) {
+
+  material_id= "material_" + i
+  
+  mat = document.getElementById(material_id);
+  mat_data = mat.options[mat.selectedIndex].value;
+  
+  if (mat_data > 0){
+    material_selected = true
+    quantity_ = "#quantity_" + i
+    plus_ = "#plus_" + i
+    minus_ = "#minus_" + i
+
+ 
+
+    if ($(quantity_).val() < 1){
+      alert("Lütfen "+i + ". malzeme için adet bilgisi giriniz...!");
+      $(quantity_).focus();
+        return false;}
+   
+        
+    if (parseFloat($(plus_).val()) >= parseFloat($(quantity_).val())){
+      alert("Lütfen "+i + ". malzeme için Fazma Miktar sahasını güncelleyiniz. Fazlalık adetten yüksek olamaz...!");
+      $(plus_).focus();
+        return false;}
+    
+    if (parseFloat($(minus_).val()) >= parseFloat($(quantity_).val())){
+      alert("Lütfen "+i + ". malzeme için Eksik Miktar sahasını güncelleyiniz. Eksiklik adetten yüksek olamaz...!");
+      $(minus_).focus();
+        return false;}
+
+    if (parseFloat($(plus_).val()) != 0 && parseFloat($(minus_).val()) != 0 ){
+      alert("Lütfen "+i + ". malzeme için fazla veya eksik sahalarından birine giriş yapınız...!");
+      $(plus_).focus();
+        return false;}
+
+   
+
+
+        
+    }
+
+    if (material_selected == false){
+      alert("Lütfen  en az bir tane Malzeme girişi yapınız...!");
+      $("material_1").focus();
+        return false;}
+
+
+
+   
+  
+}
+ 
+
+   
+
+
+  $("body").loading({
+      stoppable: false,
+      message: "LÜTFEN BEKLEYİNİZ...",
+      theme: "dark"
+    });
+
+})
+  
+  </script>
+
+{% endblock %}
+
+

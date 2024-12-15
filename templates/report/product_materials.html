@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+
+
+
+  <!-- /.content -->
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-success">Ürün Adı  <b>{{product.name}}</b> </h1>
+          <br>
+        <h1 class="card-title text-success">Bir Kutu  <b>{{product.package_quantity}} </b>adet </h1>
+          <br>
+        <h1 class="card-title text-success">Bir Palet({{product.palette_quantity|div:product.package_quantity|floatformat:0}} Kutu)  <b>{{product.palette_quantity}} </b>adet </h1>
+          <br>
+          <h1 class="card-title text-success">Bir Tır ({{product.total_production|div:product.palette_quantity|floatformat:0}} Palet)  <b>{{product.total_production|floatformat:0}} </b>adet </h1>
+          <br>
+
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+
+              <th class="text-muted">Malzeme No</th>
+              <th class="text-muted">Malzeme Adı</th>
+              <th class="text-muted">Gereken(KG)</th>
+              <th class="text-muted">Fiyat</th>
+              <th class="text-muted">Maliyet Tipi</th>
+              <th class="text-muted">İrsali No</th>
+              <th class="text-muted">Not</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for material in material_list %}
+            <tr>
+              <td>{{material.material_id}}</td>
+              <td>{{material.material__name}}</td>
+              <td>{{material.quantity|floatformat:3}}</td>
+              <td>{{material.price_try|floatformat:3}}</td>
+              <td>{{material.material__cost_type__name}}</td>
+              <td>{{material.despatch_number}}</td>
+              <td>{{material.stock_note}}</td>
+
+
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+        <br>
+        {% comment %} <div class="row">
+          <form action="{% url 'calc_excel' %}" method='post'>
+            {% csrf_token %}
+
+            <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">Excel</button>
+
+
+          </form>
+        </div> {% endcomment %}
+
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+<script>
+  $(function () {
+
+
+
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "bPaginate": true,
+      "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+  });
+
+
+
+  $('form').on('submit', function () {
+
+    $('.modal').removeClass('in');
+    $('.modal').attr("aria-hidden", "true");
+    $('.modal').css("display", "none");
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+
+
+    $("body").loading({
+      stoppable: false,
+      message: "LÜTFEN BEKLEYİNİZ...",
+      theme: "dark"
+    });
+  })
+</script>
+
+
+
+
+{% endblock %}

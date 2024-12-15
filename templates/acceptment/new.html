@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+
+{% block content %}
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="text-muted">Depo Malzeme Talebi</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Üretim içim Malzeme Talebi</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-warning"> Lütfen Ürün seçiniz ve Kilogram alanını güncelleyiniz. </h1>
+      </div>
+
+      <div class="card-body">
+
+        <div class="col-md-12">
+          <form action="{% url 'new_acceptment'  %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-8 col-sm-8 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Ürün Seçiniz </label>
+                  <select class="form-control select2" style="width: 100%;" id="product_id" name="product_id">
+                    <option value="0"> Lütfen Ürün Seçiniz...</option>
+                    {% for product in product_list %}
+                    <option value="{{product.id}}" {% if product_id == product.id %} selected={{product.id}}{% endif %}>
+                      {{product.name}}
+                      (Bir Kutu {{product.package_quantity}} adet. Bir Palet {{product.palette_quantity}} adet.)
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              {% comment %} <div class="col-md-2 col-sm-2 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Adet</label>
+                  <div>
+                    <input type="number" step="any" id="quantity" name="quantity" class="form-control" cols="40"
+                      value="{{quantity}}" required>
+
+                  </div>
+                </div>
+              </div> {% endcomment %}
+
+              <div class="col-md-2 col-sm-2 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Kilogram(KG)</label>
+                  <div>
+                    <input type="number" step="any" id="kilo" name="kilo" class="form-control" cols="40"
+                      value="{{kilo}}" required>
+
+                  </div>
+                </div>
+              </div>
+
+              {% comment %} <div class="col-md-2 col-sm-2 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Yoğunluk(kg/m3)</label>
+                  <div>
+                    <input type="number" step="any" id="density" name="density" class="form-control" cols="40"
+                      value="{{product.density}}">
+
+                  </div>
+                </div>
+              </div> {% endcomment %}
+
+
+              <div class="col-md-2 col-sm-2 col-12">
+                <div class="form-group">
+                  <label class="text-muted">İşlem</label>
+                  <div>
+                    <button name="submit" type="submit" class="btn btn-primary">Malzeme Listesi Getir</button>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </form>
+          <hr>
+
+          {% if material_list %}
+          <div class="card-header">
+            {% if material_not_found %}
+            <h1 class="card-title text-danger">Aşağıdaki malzemeler depoda bulunmuyor!
+              <br>
+              {% for material in material_list%}
+              {% if material.stock_quantity == 0 %}
+              İsim:{{material.material__name}}
+              {% endif %}
+
+              {% endfor %}
+            </h1>
+            <br>
+            {% elif min_rate < 100 %}
+            <h1 class="card-title text-danger">Toplam <b>{{total_production}} </b> Adet <b>{{kilo}} </b> Kilogram Seçili
+              üründen en fazla % {{min_rate}} oranında üretim yapabilirsiniz.!</h1>
+            <br>
+            {% endif %}
+            <br>
+            <h1 class="card-title text-muted">Toplam <b>{{total_production}} </b> Adet <b>{{kilo}} </b> Kilogram
+              <b>{{product.name}}</b> için gereken malzemeler</h1>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th class="text-muted">Malzeme Adı</th>
+                  <th class="text-muted">Gereken</th>
+                  <th class="text-muted">Depo</th>
+                  <th class="text-muted">Kullanım Oranı(%)</th>
+                  <th class="text-muted">Kullanılacak</th>
+                  <th class="text-muted">Maliyet Tipi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for material in material_list%}
+
+                {% if material.stock_quantity == 0 %}
+                <tr class="text-danger">
+                  {% elif material.quantity > material.stock_quantity %}
+                <tr class="text-warning">
+                  {% else %}
+                <tr class="text-success">
+                  {% endif %}
+                  <td>{{material.material__name}}</td>
+                  <td>{% if material.material__measurement_type__name == "Adet" %}
+                    {{material.quantity|floatformat:0}}{% else %}{{material.quantity|floatformat:4}} {% endif %}
+                    {{material.material__measurement_type__name}}</td>
+                  <td>{{material.stock_quantity|floatformat:4}} {{material.material__measurement_type__name}}</td>
+                  <td>{{min_rate}}</td>
+                  <td>{{material.usage_quantity}} {{material.material__measurement_type__name}}</td>
+                  <td>{{material.material__cost_type__name}}</td>
+                </tr>
+
+                {% endfor %}
+
+              </tbody>
+
+            </table>
+            <div class="row">
+              <div class="col-md-4 col-sm-4"><span class="text-sm badge bg-success"> Yeterli Malzeme Var </span> </div>
+              <div class="col-md-4 col-sm-4"><span class="text-sm badge bg-warning"> Sınırlı Malzeme Var</span> </div>
+              <div class="col-md-4 col-sm-4"><span class="text-sm badge bg-danger"> Malzeme Tükendi </span> </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-6 ">
+
+              {% if material_not_found %}
+              <button name="reject" type="submit" value="0" class="btn btn-danger"> Malzeme Talebi Yapılamıyor!</button>
+              {% else %}
+              <form action="{% url 'new_acceptment_entry'  %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="hidden" name="min_rate" value="{{ min_rate }}">
+                <input type="hidden" name="quantity" value="{{ total_production }}">
+                <input type="hidden" name="kilo" value="{{ kilo }}">
+                <button name="submit" type="submit" class="btn btn-success">Malzeme Talebi Gönder</button>
+              </form>
+              {% endif %}
+            </div>
+            <div class="col-md-6 col-sm-6 ">
+              <a href="{% url 'special_product' id_kilo %}">
+                <button name="change" type="submit" value="0" class="btn btn-warning"> Listeyi Değiştir</button>
+              </a>
+
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div> <!-- /.card -->
+
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+
+
+{% block javascript%}
+
+
+
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "bPaginate": true,
+      "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+</script>
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    var kilo = $("#kilo").val();
+
+    if (parseFloat(kilo) <= 0) {
+      alert("Lütfen Kilo bilgisini güncelleyiniz.");
+      $(kilo).focus();
+      return false;
+    }
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  });
+</script>
+
+
+
+{% endblock %}

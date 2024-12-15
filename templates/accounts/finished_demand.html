@@ -1,0 +1,14 @@
+{% autoescape off %}
+
+Merhaba {{user.first_name}} {{user.last_name}},
+
+{{demand.company.name}} için {{demand.date_start|date:"Y-m-d H:i:s"}} tarihinde oluşturduğunuz {{demand.number}} numaralı istek için bütün kullanıcılar seçimlerini yaptı.
+Detayları web sitesi üzerinden kontrol edebilirsiniz.
+http://{{domain}}{% url 'dashboard' %}
+
+İyi Çalışmalar.
+
+
+Bu iletinin ve varsa eklerinin içerdiği bilgiler gizlidir ve gönderildiği belirtilen kişi(ler) ve/veya kurum(lar)a özeldir. İlgili kişi değilseniz, bu iletideki bilgileri yaymamalı, çoğaltmamalı veya başka şekillerde kullanmamalısınız. Bu iletinin yanlışlıkla tarafınıza ulaşmış olması veya iletinin gönderilmek istendiği kişinin siz olmamanız halinde, iletinin içeriğinin gizliliği ve bu gizlilik yükümlülüğüne uyulması zorunluluğu tarafınız için de söz konusudur. Bu iletiyi yanlışlıkla aldıysanız veya iletinin gönderilmek istendiği kişi siz değilseniz, lütfen göndereni hemen uyarınız ve bu iletiyi tüm kopyalarıyla birlikte derhal siliniz. Gönderenin bu iletinin ve varsa eklerinin içeriği, içeriğinin doğruluğu ve güncelliği hakkında hiçbir sorumluluğu bulunmamaktadır. Gönderen, ileti içeriği ve/veya eklerinden kaynaklanabilecek olan herhangi bir zarardan dolayı hiçbir sorumluluk kabul etmemektedir. Bu iletinin içeriği yazarı tarafından oluşturulmuş olup ITS Bilişim ve Enerji'nin görüşlerini yansıtmayabilir.
+
+{% endautoescape %}

@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-muted">Malzeme Talep Kayıtları</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+                        <li class="breadcrumb-item active">Satın Alma</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- /.table -->
+    <section class="content">
+        <div class="card">
+
+            <div class="card-header">
+                <h1 class="card-title text-success"> ONAY LİSTESİ :
+                    {% for user in user_list %}
+                    {{user}}@borline.com.tr
+                    {% endfor %}
+                </h1>
+                <br>
+                <h1 class="card-title text-warning">Sipariş onaylandıktan sonra yetkili kullanıcılara e-mail olarak
+                    gönderilecektir. </h1>
+
+
+                <br>
+                <h1 class="card-title text-warning"> Lütfen kontrollerinizi yaptıktan sonra Onayla butonuna tıklayınız.
+                </h1>
+                <br>
+                <h1 class="card-title text-warning">Sipariş detayları için lütfen <b>No</b> üzerine tıklayınız. </h1>
+                <br>
+                <br>
+
+                <a href="{% url 'purchasing_new_order' %}" class="btn btn-success">Yeni Talep</a>
+            </div>
+            <!-- /.card-header -->
+            {% if purchasing_list %}
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-muted">No</th>
+                            <th class="text-muted">Kullanıcı</th>
+                            <th class="text-muted">Tarih</th>
+                            <th class="text-muted">Not</th>
+                            <th class="text-muted">Toplam Malzeme</th>
+                            <th class="text-muted">İşlem</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in purchasing_list %}
+
+                        <tr class="text-muted">
+                            <td><a href="{%url 'purchasing_order_details' object.id%}">{{object.id}}<a></td>
+                            <td>{{object.user__email}}</td>
+                            <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                            <td>{{object.note}}</td>
+                            <td>{{object.total_material}}</td>
+                            <td>
+                                {%if object.is_processed%}
+                                    <li class="list-inline-item">
+                                        <button class="btn btn-success btn-sm rounded-0" type="button" disabled title="İşlem Yapılamaz"><i class="fa fa-check"></i></button>
+                                    </li>
+                                    <li class="list-inline-item">
+                                    <button class="btn btn-warning btn-sm rounded-0" type="button" disabled title="İşlem Yapılamaz" ><i class="fa fa-edit"></i></button>
+                                    </li>
+                                    <li class="list-inline-item">
+                                    <button class="btn btn-warning btn-sm rounded-0" type="button" disabled title="İşlem Yapılamaz" ><i class="fa fa-trash"></i></button>
+                                    </li>
+                                {%else%}
+                                
+                                    <ul class="list-inline m-0">
+                                        <li class="list-inline-item">
+                                            <button class="btn btn-success btn-sm rounded-0" type="button"
+                                                data-toggle="modal" data-target="#modal-warning_{{ object.id }}"
+                                                title="Onayla"><i class="fa fa-check"></i></button>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="{% url 'purchasing_edit_order' object.id %}">
+                                                <button class="btn btn-warning btn-sm rounded-0" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="Güncelle"><i
+                                                        class="fa fa-edit"></i></button>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <button class="btn btn-danger btn-sm rounded-0" type="button"
+                                                data-toggle="modal" data-target="#modal-danger_{{ object.id }}"
+                                                title="Sil"><i class="fa fa-trash"></i></button>
+                                        </li>
+                                    </ul>
+
+                                {%endif%}
+                            </td>
+                            </td><div class="modal fade" id="modal-danger_{{ object.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content bg-danger">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">EMİN MİSİNİZ? No:{{object.id}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>No:{{object.id}} ile eşleşen bütün kayıtlar silinecek! </p>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+
+                                            <form action="{% url 'purchasing_delete_order' %}" method='post'>
+                                                {% csrf_token %}
+                                                <input type="hidden" name="object_id" value="{{ object.id }}">
+                                                <button type="submit" value="yes" class="btn btn-outline-light"
+                                                    onclick="this.form.submit();">EVET</button>
+
+                                                <button type="button" class="btn btn-outline-light"
+                                                    data-dismiss="modal">HAYIR</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+
+                            <div class="modal fade" id="modal-warning_{{ object.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content bg-success">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">EMİN MİSİNİZ? No:{{object.id}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <onspan aria-hidden="true">&times;</onspan>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>No:{{object.id}} Fiyat Girişi Yapılabilmesi için Onaylanacak! </p>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+
+                                            <form action="{% url  'purchasing_confirm_order' %}" method='post'
+                                                enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="object_id" value="{{ object.id }}">
+                                                <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+                                                <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+
+                            {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% else %}
+            <div class="card-header">
+                <h1 class="card-title text-muted"> Onay Bekleyen Sipariş Listesi bulunamadı. </h1>
+                <br><br>
+                <a href="{% url 'purchasing_new_order' %}"> <button class="btn btn-sm btn-outline-success">Yeni Talep
+                        Ekle</button></a>
+            </div>
+            {% endif %}
+            <!-- /.card-body -->
+        </div>
+
+
+    </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+
+
+
+<script>
+    $(function () {
+
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "bPaginate": true,
+            "iDisplayLength": 50,
+            "order": [
+                [0, "desc"]
+            ],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    });
+
+
+    $('form').on('submit', function () {
+
+        $('.modal').removeClass('in');
+        $('.modal').attr("aria-hidden", "true");
+        $('.modal').css("display", "none");
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+
+
+        Swal.fire({
+            title: 'Güncelleniyor...',
+            html: 'Lütfen Bekleyiniz...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+    })
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock %}

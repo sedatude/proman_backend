@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+  <section class="content">
+ 
+   
+
+    <div class="card">
+      
+      <div class="card-header">
+        <div class="col-md-4 col-sm-4 col-12">
+          <a href="{% url 'new_product' %}" class="btn btn-success">
+           Yeni Ürün </a>
+        </div>
+      </div>
+   
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Ürün Silme ve Güncelleme İşlemlerini aşağıdaki ikonlara tıklayarak gerçekleştirebilirsiniz. </h1>
+        <br>  <br>
+      </div>
+
+     
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="text-muted">No</th>
+                <th class="text-muted">İsim</th>
+                <th class="text-muted">Açıklama</th>
+                <th class="text-muted">Ürün Tipi</th>
+                <th class="text-muted">ML</th>
+                <th class="text-muted">KDV</th>
+                <th class="text-muted">KDV'siz Fiyatı</th>
+                <th class="text-muted">Market Fiyatı</th>
+                <th class="text-muted">Hammadde Ağırlığı</th>
+                <th class="text-muted">Koli içi Adet</th>
+                <th class="text-muted">Koli Ağırlığı</th>
+                <th class="text-muted">Palet Koli Adeti</th>
+                <th class="text-muted">Palet Ağırlı</th>
+                <th class="text-muted">Barkod</th>
+                <th class="text-muted">Toplam Üretim</th>
+                <th class="text-muted">İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in product_list %}
+
+              <tr>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.type.name}}</td>
+                <td>{{product.meter}}</td>
+                <td>{{product.vat}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.price_market}}</td>
+                <td>{{product.internal_weight}}</td>
+                <td>{{product.package_quantity}}</td>
+                <td>{{product.package_weight}}</td>
+                <td>{{product.palette_quantity}}</td>
+                <td>{{product.palette_weight}}</td>
+                <td>{{product.barcode}}</td>
+                <td>{{product.total_production}}</td>
+                
+                
+                  <td>
+                    <ul class="list-inline m-0">
+                    
+                      <li class="list-inline-item">
+                        <a href="{% url 'edit_product' product.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                          <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-danger_{{ product.id }}" title="Sil"><i class="fa fa-trash"></i></button>
+                      </li>
+                  </ul>
+                    
+                  </td>
+
+                <div class="modal fade" id="modal-danger_{{ product.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-danger">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{product.name}} Kaydı Silinecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url 'delete_product' %}" method='post'>
+                          {% csrf_token %}
+                          <input type="hidden" name="object_id" value="{{ product.id }}">
+                          <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+              </tr>
+                {% endfor %}
+          
+
+            </tbody>
+
+          </table>
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+
+
+<script>
+  $(function () {
+
+  
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+  
+  });
+
+
+$('form').on('submit', function(){
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+ 
+  
+  Swal.fire({
+    title: 'Güncelleniyor...',
+    html: 'Lütfen Bekleyiniz...',
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading()
+    }
+  });
+  
+
+})
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+{% endblock %}

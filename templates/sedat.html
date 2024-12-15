@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+  <section class="content">
+    <div class="container-fluid">
+  
+      <div class="row">
+        <div class="col-lg-3 col-6">
+  
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{production_stock}}</h3>
+              <p>Üretimdeki Toplam Ürün</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-hands-holding-circle"></i>
+            </div>
+            <a href="{% url 'production' %}" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+   
+  
+      </div>
+  
+   
+    </div>
+  </section>
+  
+  
+  <section class="content">
+   
+    <!-- Default box -->
+    <div class="card">
+      
+      <div class="text-success card-header border-0">
+        <div class="d-flex justify-content-between">
+          <h3 class="card-title" id="total_production_count">Toplam Ürün Adet</h3>
+          <h3 class="card-title"id="total_production_type"  >Toplam Ürün Çeşidi </h3>
+          
+        </div>
+      </div>
+        <div class="card-body">
+          <div class="row">
+           
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="text-warning card-header border-0">
+                  {% comment %} <div class="d-flex justify-content-between">
+                    <h3 class="card-title">{{company.name}}</h3>
+                    
+                    <span class="text-bold text-sm" id="company_dc_power_{{company.id}}">Üretim</span> 
+                  </div> {% endcomment %}
+                </div>
+              <div class="card-body">
+                {% comment %} <div class="d-flex">
+                  <p class="text-info d-flex flex-column">
+                    <span class="text-bold text-sm" id="company_production_{{company.id}}">Üretim</span> 
+                    <span class="text-bold text-sm" id="company_revenue_{{company.id}}">Kazanç</span> 
+                  </p>
+                   <div class="ml-auto d-flex flex-column text-right" id="company_percentage_{{company.id}}" >
+                    
+                    </div>
+                   
+                  </p>
+                </div> {% endcomment %}
+                <!-- /.d-flex -->
+
+                <div class="chart">
+                  <canvas id="barChart_1" style="height:230px; min-height:230px"></canvas>
+                </div>
+
+            
+              </div>
+              
+
+            </div>
+          </div>
+
+     
+           
+          </div>
+
+
+        </div>  <!-- /row-->
+        <!-- /.card-body -->
+       
+        <!-- /.card-footer-->
+      </div>
+      
+
+
+        <!-- /.card-body -->
+      
+      <!-- /.card -->
+
+  </section>
+
+  <section id="contentStart noInfo" class="serviceContainer">
+
+
+
+
+
+
+
+    <ol class="serviceInstructions">
+      Bu hizmeti kullanarak çalışma hayatınız ile ilgili;
+      iş arama, çalışmaya başlama, sigorta, emeklilik, mesleki yeterlilik gibi bilgileri görüntüleyebilir ve
+      ilgili işlemleri yapabilirsiniz.
+    </ol>
+
+    <div class="reminderContainer">İşten ayrılış bildirgelerinin 01/08/2009 tarihinden sonra dijital ortamda beyan
+      edilmesine başlandığı için;
+      bu tarihlerden önce kağıt ortamda verilen bildirgeler bu sayfada görüntülenememektedir.
+      Bu sayfada gösterilen tescil bilgilerinizde eksiklik / hata olduğunu düşünüyorsanız; söz konusu
+      çalışmalarınızı,
+      “SGK Tescil ve Hizmet Dökümü / İşyeri Unvan Listesi” hizmetinden görüntüleyebilirsiniz.</div>
+
+
+
+
+
+
+    <ul class="toogleBar htoogleBar">
+      <li><a href="#tab4A" class="selected">4A TESCİLİ EMEKLİLİK BİLGİLERİ</a></li>
+    </ul>
+    <div class="scard_container">
+      <section class="tabgroup">
+
+
+        <div id="tab4A" class="toggled active">
+          <div class="card_row_sm">
+            <h3>
+              4A TESCİLİNE GÖRE EMEKLİLİK BİLGİLERİNİZ
+            </h3>
+            <div class="card-item colc1 bborder">
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p "> 4A TESCİL BAŞLANGIÇ <span>{{date_start}}</span></div>
+              </div>
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">HİZMETE BAŞLAMA TARİHİNİZ <span>{{date_start}}</span></div>
+                <div class="cardcontainer_title w50p ">PRİM ÖDEME GÜN SAYISI<span class="text_green">5579</span>
+                </div>
+              </div>
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p">YAŞINIZ<span> 39 yıl, 8 ay, 30 gün</span></div>
+                <div class="cardcontainer_title w50p">SİGORTALILIK SÜRESİ <span>15 yıl, 11 ay, 10 gün</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card_row_sm">
+            <h4>EMEKLİLİK ŞARTLARI (60 YAŞ/7000 GÜN)
+            </h4>
+
+            <div class="card-item colc1 bborder">
+
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">EMEKLİLİK YAŞI <span>60 YAŞ</span></div>
+                <div class=" w50p ">
+                  <div class="cardcontainer_title ">KALAN YAŞ
+                    <span class="text_blue"> 20 yıl, 2 ay, 30 gün </span>
+
+                    <div class="progressbar progressbar_neo">
+                      <span class="progress_comp bg_blue" style="width:66%;"></span>
+                      <div class="progressbar_result">%66</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">PRİM GÜN SAYISI <span>7000 GÜN</span></div>
+                <div class=" w50p ">
+                  <div class="cardcontainer_title ">KALAN PRİM GÜN<span class="text_green">1421 GÜN</span>
+
+                    <div class="progressbar progressbar_neo">
+                      <span class="progress_comp bg_green" style="width:80%;"></span>
+                      <div class="progressbar_result">%80</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+
+            </div>
+
+          </div>
+
+          <div class="card_row_sm">
+            <h4>EMEKLİLİK ŞARTLARI (60 YAŞ/4500 GÜN/25 YIL)
+            </h4>
+
+            <div class="card-item colc1 bborder">
+
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">EMEKLİLİK YAŞI <span>60 YAŞ</span></div>
+                <div class=" w50p ">
+                  <div class="cardcontainer_title ">KALAN YAŞ
+                    <span class="text_blue"> 20 yıl, 2 ay, 30 gün </span>
+
+                    <div class="progressbar progressbar_neo">
+                      <span class="progress_comp bg_blue" style="width:66%;"></span>
+                      <div class="progressbar_result">%66</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">PRİM GÜN SAYISI <span>4500 GÜN</span></div>
+                <div class=" w50p ">
+                  <div class="cardcontainer_title ">KALAN PRİM GÜN<span class="text_green">0 GÜN</span>
+
+                    <div class="progressbar progressbar_neo">
+                      <span class="progress_comp bg_green" style="width:100%;"></span>
+                      <div class="progressbar_result">%100</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="card_row_sm">
+                <div class="cardcontainer_title w50p ">SİGORTALILIK SÜRESİ<span>25 YIL</span></div>
+                <div class=" w50p ">
+                  <div class="cardcontainer_title ">KALAN SÜRE<span class="text_yellow"> 9 yıl, 0 ay, 19
+                      gün</span>
+                    <div class="progressbar progressbar_neo">
+                      <span class="progress_comp bg_yellow" style="width:64%;"></span>
+                      <div class="progressbar_result">%64</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+
+
+          <br>
+          <span class="footer_dsc">
+            <div class="reminderContainer"><strong>Resmi belge niteliği taşımamakta olup, sadece bilgilendirme
+                amaçlıdır.</strong></div>
+            <br />
+            * İlk tescil tarihi ile adınıza ilk defa uzun vade sigorta primi ödenen tarihin farklı olması, fiili
+            hizmet süresi zammı ve/veya itibari hizmet süresi kapsamında hizmetlerinizin bulunması halinde;
+            emeklilik koşullarınız yeniden hesaplanmalıdır. Bu durumda en son çalışmalarınızın bulunduğu Sosyal
+            Güvenlik İl / Merkezine müracaatınız gerekmektedir.
+            <br />
+            * Bu uygulamada, ağır engelli çocuğu bulunan kadın sigortalıların, engelliliği nedeniyle vergi
+            indiriminden yararlananların, çalışma gücü kayıp oranı %60 altında olanların, erken yaşlananların,
+            maden yeraltı hizmetleri bulunanların, ilk defa çalışmaya başladığı tarihten önce malul olduğu tespit
+            edilenlerin ve ileri yaş emeklilik koşulları hesaplanmamaktadır. Bu durumda en son çalışmalarınızın
+            bulunduğu Sosyal Güvenlik İl / Merkezine müracaatınız gerekmektedir.
+            <br />
+            * Dosyanızda yer alan bilgilerle sistemdeki bilgilerin farklılık göstermesi durumunda emeklilik
+            koşullarınız farklılık gösterebilecektir.
+            <br />
+            * Emeklilik şartlarınızda bir tereddüt olması durumunda bağlı bulunduğunuz Sosyal Güvenlik İl /
+            Merkezine müracaat ediniz ve ilgili Merkezin yazılı olarak tarafınıza bildirmiş olduğu emekliliğe hak
+            kazanma koşullarını dikkate alınız.
+            <br />
+            * Yukarıda belirtilen hak kazanma koşullarınız ;
+            2008 yılı Ekim ayı başından (kamu sektörü için 15/10/2008 (hariç), özel sektör için 1/10/2008 (hariç)
+            ) önce sigortalı olanlar için 2829 Kanuna göre son yedi yıllık fiili hizmet süreniz içinde 4/1-(a)
+            hizmetinizin fazla olması durumunda geçerlidir.
+
+            2008 yılı Ekim ayı başından (kamu sektörü için 15/10/2008 (hariç), özel sektör için 1/10/2008 (hariç)
+            ) sonra sigortalı olanlar için ise
+            5510 sayılı Kanunun 53’üncü maddesi gereğince fiili hizmet süreniz içinde en fazla 4/1-(a)
+            hizmetinizin olması durumunda geçerlidir.
+            <br />
+          </span>
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+      </section>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="consept-cards">
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?emeklilik=Islemleri">
+          <span class="card-icon"> <img alt=""
+              src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/emekliler.png"> </span>
+          <div class="card-content">
+            <h2>Emeklilik İşlemleri</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?calisan=Islemleri">
+          <span class="card-icon"> <img alt="" src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/calisan.png">
+          </span>
+          <div class="card-content">
+            <h2> Çalışan</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?sgk=Borclariniz">
+          <span class="card-icon"> <img alt="" src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/odeme.png">
+          </span>
+          <div class="card-content">
+            <h2> SGK Borçlarınız </h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?saglik=Tedavi">
+          <span class="card-icon"> <img alt="" src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/saglik.png">
+          </span>
+          <div class="card-content">
+            <h2> Sağlık Tedavi</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?is=Ariyorum">
+          <span class="card-icon"> <img alt="" src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/isara.png">
+          </span>
+          <div class="card-content">
+            <h2>İş Arıyorum</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?yapilandirma=Islemleri">
+          <span class="card-icon"> <img alt="" src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/esnaf.png">
+          </span>
+          <div class="card-content">
+            <h2> Yapılandırma İşlemleri</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?card=Yetkinliklerim">
+          <span class="card-icon"> <img alt=""
+              src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/yetkinlik.png"> </span>
+          <div class="card-content">
+            <h2> Yetkinliklerim</h2>
+          </div>
+        </a>
+      </div>
+
+      <div class="card-item">
+        <a href="/calisma-hayatim?card=Bildirimler">
+          <span class="card-icon"> <img alt=""
+              src="//cdn.e-devlet.gov.tr/themes/ankara/images/icons/bildirim.png"> </span>
+          <div class="card-content">
+            <h2> Bildirimler </h2>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+
+  </section>
+ 
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+ 
+
+<script>
+  $(function (){
+  
+  
+  
+    const data_list = {{data_json|safe}};
+    var total_production = (data_list.map(data_list => data_list.total).reduce((acc, data_list) => data_list + acc));
+    
+    
+  
+    const result = data_list.reduce((a, {product_id, product__name, total}) => {
+      a[product_id] = a[product_id] || {product_id, product__name, total: 0};
+      a[product_id].total += total;
+      return a;
+    }, {})
+ 
+    var total_production_type = Object.values(result).length;
+ 
+        
+    document.getElementById("total_production_count").innerHTML = 'Toplam Üretim:'+ new Intl.NumberFormat().format(parseInt(total_production)) ;
+    document.getElementById("total_production_type").innerHTML = 'Toplam Ürün Çeşidi:'+ new Intl.NumberFormat().format(parseInt(total_production_type)) ;
+    
+    var labels = []
+    var data = []
+
+    var labels_chart = []
+    var data_chart = []
+      
+      for(var i in data_list)
+        {
+          data.push(data_list[i]['total'])
+          labels.push(data_list[i]['read_date'].substr(2,9))
+        }
+  
+    var areaChartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Üretim(Adet)',
+            backgroundColor: 'rgba(48,167,74,0.9)',
+            borderColor: 'rgba(60,141,188,0.8)',
+            pointRadius: false,
+            pointColor: '#3b8bba',
+            pointStrokeColor: 'rgba(48,167,74,1)',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(48,167,74,1)',
+            data: data
+          }
+        ]
+      }
+  
+    
+      var barChartData = jQuery.extend(true, {}, areaChartData)
+      
+      var temp0 = areaChartData.datasets[0]
+      barChartData.datasets[0] = temp0
+  
+      var barChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetFill: false
+      }
+      var barChartCanvas = $('#barChart_1').get(0).getContext('2d')
+      
+      var barChart = new Chart(barChartCanvas, {
+        type: 'bar',
+        data: barChartData,
+        options: barChartOptions
+      })
+
+      
+    var labels_chart = []
+    var data_chart = []
+      
+      for(var i in  Object.values(result))
+        {
+          data_chart.push( Object.values(result)[i]['total']);
+          labels_chart.push( Object.values(result)[i]['product__name']);
+           
+          var completelist= document.getElementById("products_ul");
+          completelist.innerHTML += '<li class="nav-item text-success">' + Object.values(result)[i]['product__name'] + '<span class="float-right ">' + Object.values(result)[i]['total'] +   ' adet</span>  </li>'
+          
+        }
+
+       //-------------
+    //- DONUT CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+    var donutData        = {
+      labels: labels_chart,
+      datasets: [
+        {
+          data: data_chart,
+          backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de' , '#e226de', '#69f554', '#01a69a', '#9c12f3', '#00e0cf', '#8d3cbc', '#d6d2de' , '#26e2de'],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'doughnut',
+      data: donutData,
+      options: donutOptions
+    })
+
+     
+
+
+
+
+  
+      $("form").submit(function () {
+      if ($(this).valid()) {
+        $(this).submit(function () {
+          return false;
+        });
+        return true;
+      }
+      else {
+        return false;
+      }
+      });
+  
+       
+      
+     // window.setTimeout(function () { location.href = "{{ dashboard }}";}, 5*60*1000); // refresh/redirect after   seconds.
+      
+  
+  })
+  
+</script>
+
+
+
+<script>
+  $(function () {
+   
+   
+    
+   
+  })
+</script>
+
+
+
+
+{% endblock %}

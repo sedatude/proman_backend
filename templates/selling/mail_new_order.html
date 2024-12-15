@@ -1,0 +1,39 @@
+{% autoescape off %}
+
+Merhaba Sayın Yetkili,
+
+<b>{{company_details.created_at|date:"Y-m-d H:i:s"}}</b> tarihinde <b>{{company_details.user.email}}</b> kullanıcısı tarafından
+<b>{{company_details.company.name}}</b>  şirketi için  sipariş alındı.
+Sipariş Bilgileri aşağıdadır. 
+<br>
+<br>
+<table style="width:100%; text-align:left; padding: 3px;">
+  <thead>
+    <tr>
+      <th style="text-align:left;">Malzeme Adı</th>
+      <th style="text-align:left;">Koli</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in selling_list %}
+    <tr>
+      <td>{{ order.product__name }}</td>
+      <td>{{ order.quantity }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+Detayları aşağıdaki linkten inceleyebilirsiniz. 
+<br>
+http://{{current_site}}
+<br><br>
+İyi Çalışmalar.
+<br>
+<br>
+<br>
+Bu iletinin ve varsa eklerinin içerdiği bilgiler gizlidir ve gönderildiği belirtilen kişi(ler) ve/veya kurum(lar)a özeldir. İlgili kişi değilseniz, bu iletideki bilgileri yaymamalı, çoğaltmamalı veya başka şekillerde kullanmamalısınız. Bu iletinin yanlışlıkla tarafınıza ulaşmış olması veya iletinin gönderilmek istendiği kişinin siz olmamanız halinde, iletinin içeriğinin gizliliği ve bu gizlilik yükümlülüğüne uyulması zorunluluğu tarafınız için de söz konusudur. Bu iletiyi yanlışlıkla aldıysanız veya iletinin gönderilmek istendiği kişi siz değilseniz, lütfen göndereni hemen uyarınız ve bu iletiyi tüm kopyalarıyla birlikte derhal siliniz. Gönderenin bu iletinin ve varsa eklerinin içeriği, içeriğinin doğruluğu ve güncelliği hakkında hiçbir sorumluluğu bulunmamaktadır. Gönderen, ileti içeriği ve/veya eklerinden kaynaklanabilecek olan herhangi bir zarardan dolayı hiçbir sorumluluk kabul etmemektedir. Bu iletinin içeriği yazarı tarafından oluşturulmuş olup Borline'ın görüşlerini yansıtmayabilir.
+
+
+{% endautoescape %}

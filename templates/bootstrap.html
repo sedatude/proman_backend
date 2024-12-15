@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+
+<div class="container">
+
+  <div class="example col-lg-4 col-sm-6">
+    <h3>Body loading</h3>
+
+    <div>
+      <button id="loading-body-btn" class="btn btn-primary btn-block">
+        Click me to add a loading state to the page's body
+      </button>
+
+      <button id="loading-body2-btn" class="btn btn-primary btn-block">
+        Second body loading, different configs
+      </button>
+    </div>
+
+</div>
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'dist/js/jquery.loading.js' %}" ></script>
+
+
+
+<script>
+  $("#loading-lazy-start").loading({
+            theme: "dark",
+            message: "Lazy start",
+            start: false
+          });
+
+  $("#loading-body-btn").click(function() {
+    $("body").loading({
+      stoppable: true
+    });
+  });
+
+  $("#loading-body2-btn").click(function() {
+    $("#loading-custom-overlay").loading({
+            overlay: $("#custom-overlay")
+          });
+  });
+</script>
+
+
+{% endblock %}

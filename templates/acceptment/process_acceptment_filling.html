@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="text-success">Üretim Dolum Onayı</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'production'%}">Üretim</a></li>
+            
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>>
+
+
+  <section class="content">
+    <div class="card">
+        
+
+      <div class="card-body">
+
+        <div class="col-md-12 col-sm-12">
+          <div class="row">
+
+            <div class="col-md-6 col-sm-6">
+              <div class="form-group">
+                <label class="text-muted">Ürün Adı</label>
+                <text id="number_str" name="number_str" class="form-control"
+                  aria-readonly="true">{{production.product.name}}</text>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6">
+              <div class="form-group">
+                <label class="text-muted">Kayıt Tarihi</label>
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{production.created_at|date:"Y-m-d H:i:s"}}</text>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-md-6 col-sm-6">
+              <div class="form-group">
+                <label class="text-muted">Durum</label>
+
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{production.status.name}}</text>
+              </div>
+            </div>
+
+
+            <div class="col-md-3 col-sm-3">
+              <div class="form-group">
+                <label class="text-muted">Kullanılan Kilo</label>
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{production.kilo}}</text>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+              <div class="form-group">
+                <label class="text-muted">Beklenen Adet</label>
+                <text id="date_start" name="date_start" class="form-control"
+                  aria-readonly="true">{{production.quantity}}</text>
+              </div>
+            </div>
+
+          </div>
+
+
+
+          <div class="col-md-12 col-sm-12">
+            <div class="form-group">
+              {% if production.note_store %}
+              <label class="text-warning">Depo Not: {{ production.note_store }}</label>
+              {%else%}
+              <label class="text-warning">Depo Not: Kullanıcı tarafından girilmedi...!</label>
+              {%endif%}
+
+            </div>
+          </div>
+
+
+
+          <div class="col-md-12 col-sm-12">
+            <div class="form-group">
+              {% if production.note_production %}
+              <label class="text-warning">Üretim Not: {{ production.note_production }}</label>
+              {%else%}
+              <label class="text-warning">Üretim Not: Kullanıcı tarafından girilmedi...!</label>
+              {%endif%}
+
+            </div>
+          </div>
+
+
+
+          <br>
+
+
+
+
+
+
+
+
+          <div class="col-sm-12 col-md-12">
+            <div class="col-sm-12 col-md-12">
+
+              <h1 class="card-title text-muted">KULLANILAN MALZEMELER </h1>
+              <br>
+              <br>
+            </div>
+
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th class="text-muted">Malzeme Adı</th>
+                  <th class="text-muted">Adet/Miktar</th>
+                  <th class="text-muted">Firma</th>
+                  <th class="text-muted">Mal. Kabul Tarihi</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {% for object in material_list %}
+                <tr>
+                  <td>{{object.stock__material__name}}</td>
+                  <td>{{object.quantity|floatformat:3}}</td>
+                  <td>{{object.stock__shipment__company__name}}</td>
+                  <td>{{object.stock__shipment__created_at|date:"Y-m-d H:i:s"}}</td>
+                </tr>
+
+                {% endfor %}
+
+              </tbody>
+
+            </table>
+
+            <hr>
+
+            <form action="{% url 'process_acceptment_filling' production.id %}" method="POST"
+              enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label class="text-muted">Gerçekleşen Üretim Adeti</label>
+                    <input type="number" id="production_quantity" name="production_quantity" class="form-control"
+                      required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div class="form-group">
+                    <label class="text-muted">Açıklama</label>
+                    <textarea id="note_manager" name="note_manager" class="form-control" aria-readonly="true"
+                      placeholder="Lütfen açıklama giriniz..."></textarea>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label class="text-muted">Lütfen işlem yapın</label><br>
+                  <button name="confirm" type="submit" value="1" class="btn btn-success">ONAYLA</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+
+        </div>
+
+
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+    if ($(document.activeElement).val() == 0) {
+      if ($('#note_manager').val().length < 5) {
+        alert("LÜTFEN AÇIKLAMA GİRİNİZ..!");
+        return false;
+      }
+    }
+
+
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+
+
+  })
+</script>
+
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "bPaginate": true,
+      "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+</script>
+
+{% endblock %}

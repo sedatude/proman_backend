@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        <h1 class="card-title text-success"> Stokta Bulunan Ürün Bilgileri  </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">No</th>
+              <th class="text-muted">Ürün Adı</th>
+              <th class="text-muted">Üretim Tarihi</th>
+              <th class="text-muted">Adet</th>
+              <th class="text-muted">Koli</th>
+              <th class="text-muted">Palet</th>
+              <th class="text-muted">Fiyat(₺)</th>
+              <th class="text-muted">Vadeli(₺)</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for object in product_list %}
+            <tr>
+              <td>{{object.production_id}}</td>
+              <td>{{object.product__name}}</td>
+              {% comment %} <td><a href="{% url 'production_details' object.production_id %}">{{object.product__name}}</a></td> {% endcomment %}
+              <td>{{object.production__created_at|date:"Y-m-d H:i:s"}}</td>
+              <td>{{object.quantity|floatformat:0}}</td>
+              <td>{{object.total_package|floatformat:0}}</td>
+              <td>{{object.total_palette|floatformat:0}}</td>
+              <td>{{object.price|floatformat:2 }}</td>
+              <td>{{object.price_future|floatformat:2 }}</td>
+              {% comment %} <td> <td>{{object.status__name}}</td>
+                {% comment %} <a href="{% url 'process_acceptment_store' object.id %}">
+                <a href="#">
+                <button type="button" class="btn btn-outline-success">Güncelle</button>
+                </a>
+              </td> {% endcomment %}
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+ 
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50, "order": [[1, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+  
+
+</script>
+
+
+
+
+{% endblock %}

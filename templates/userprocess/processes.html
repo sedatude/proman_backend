@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+ 
+  <section class="content">
+
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Kullanıcı Yetkilendirme ve Şifre Güncelleme </h1>
+        <br>  <br>
+      </div>
+
+     
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="text-muted">Email</th>
+                <th class="text-muted">Ad</th>
+                <th class="text-muted">Soyad</th>
+                <th class="text-muted">Yetkiler</th>
+                <th class="text-muted">Şifre Değiştir</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in user_list %}
+              <tr>
+                <td>{{u.email}}</td>
+                <td>{{u.first_name}}</td>
+                <td>{{u.last_name}}</td>
+                
+                  <td>
+                    <ul class="list-inline m-0">
+                      <li class="list-inline-item">
+                        <a href="{% url 'edit_rights' u.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                  </ul>
+                  </td>
+
+                  <td>
+                    <ul class="list-inline m-0">
+                      <li class="list-inline-item">
+                        <a href="{% url 'edit_password' u.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                  </ul>
+                  </td>
+ 
+
+              </tr>
+                {% endfor %}
+             
+            </tbody>
+
+          </table>
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+
+
+<script>
+  $(function () {
+
+  
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  
+  });
+
+
+$('form').on('submit', function(){
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+ 
+  
+ $("body").loading({
+     stoppable: false,
+     message: "LÜTFEN BEKLEYİNİZ...",
+     theme: "dark"
+   });
+})
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+{% endblock %}

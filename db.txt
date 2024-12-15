@@ -1,0 +1,25 @@
+
+   CREATE DATABASE proman;  
+    CREATE USER prmn WITH PASSWORD '102030sE*b35';	
+     ALTER ROLE prmn SET client_encoding TO 'utf8';
+  ALTER ROLE prmn SET default_transaction_isolation TO 'read committed';
+  ALTER ROLE prmn SET timezone TO 'Europe/Istanbul';
+   GRANT ALL PRIVILEGES ON DATABASE proman TO prmn;
+   GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public to prmn;
+
+\c proman
+
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public to prmn;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO prmn;
+
+
+
+python.exe -Xutf8 ./manage.py dumpdata accounts > data.json
+
+
+sudo -u postgres psql
+alter table companies_company owner to prmn ;
+
+ssh -L 63332:localhost:5432 aslan@92.205.16.246
+select * from product_material

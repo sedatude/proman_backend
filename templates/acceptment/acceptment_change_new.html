@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  
+
+
+ 
+  <section class="content-header">
+    
+
+     
+
+  
+
+
+
+  <!-- /.content -->
+
+
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-muted">{{product.name}} malzemeleri</h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+
+              <th class="text-muted">Malzeme Adı</th>
+              <th class="text-muted">Gereken(KG)</th>
+              <th class="text-muted">Maliyet Tipi</th>
+
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for material in material_list %}
+            <tr>
+              <td>{{material.name}}</td>
+              <td>{{material.quantity}}</td>
+              <td>{{material.cost_type__name}}</td>
+
+            </tr>
+
+           {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+<script>
+  $(function () {
+
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+  });
+
+
+
+$('form').on('submit', function(){
+
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+
+
+ $("body").loading({
+     stoppable: false,
+     message: "LÜTFEN BEKLEYİNİZ...",
+     theme: "dark"
+   });
+})
+
+
+</script>
+
+
+
+
+{% endblock %}

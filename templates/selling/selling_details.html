@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-success"> Şirket Adı:{{selling_list.0.company_details__company__name}} </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">No</th>
+              <th class="text-muted">Ürün Adı</th>
+              <th class="text-muted">Palet Adet</th>
+              <th class="text-muted">Fiyat</th>
+              <th class="text-muted">İndirim(%)</th>
+              <th class="text-muted">Toplam(₺)</th>
+              <th class="text-muted">Durum</th>
+              <th class="text-muted">Tarih</th>
+              
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for object in selling_list %}
+            {% if object.company_details__status__name == 'Revize Edildi' %}
+            <tr class="text-warning">
+            {% elif object.company_details__status__name == 'İptal Edildi' %}
+            <tr class="text-warning">
+            {%else%}
+            <tr class="text-success">
+            {%endif%}
+              <td>{{object.company_details_id}}</td>
+              <td>{{object.product__name}}({{object.product__palette_package_quantity}}K {{object.product__palette_quantity}}A)</td>
+              <td>{{object.quantity|floatformat:0}}</td>
+              <td>{{object.price}}</td>
+              <td>{{object.discount}}</td>
+              <td>{{object.amount}}</td>
+              <td>{{object.company_details__status__name}}</td>
+              <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+
+            </tr>
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+<script>
+  $(function () {
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": false, "iDisplayLength": 25,  "order": [[0, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  
+  });
+</script>
+
+
+
+
+{% endblock %}

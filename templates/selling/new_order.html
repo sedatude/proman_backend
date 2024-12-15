@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Yeni Sipariş Kaydı </h1>
+      </div>
+      <!-- /.card-header -->
+
+      <form action="{% url 'add_selling_order' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label class="text-muted">Şirket Seçiniz</label>
+                <select class="form-control select2" style="width: 100%;" id="company_id" name="company_id">
+                  <option value="0"> Lütfen Şirket Seçiniz...</option>
+                  {% for company in company_list %}
+                  <option value="{{company.id}}" {% if company_id == company.id %} selected={{company.id}}{% endif %}>
+                    {{company.name}}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-4 col-sm-4 ">
+              <label class="text-muted" for="type">Yeni Şirket Girişi</label>
+              <div>
+                <a href="{% url 'new_company' %}" class="btn btn-success">
+                  Yeni Şirket </a>
+              </div>
+            </div>
+
+          </div>
+
+          <br>
+
+          <div class="row">
+
+
+            <div class="col-md-6 col-sm-6 col-12">
+              <label class="text-muted" id="totalSum" name="totalSum">Genel Toplam:0₺</label>
+            </div>
+
+
+            <table id="example1" class="table table-bordered table-striped">
+
+              <thead>
+                <tr>
+                  {% comment %} <th class="text-muted">Ürün Kodu</th> {% endcomment %}
+                  <th class="text-muted">Ürün Adı</th>
+                  <th class="text-muted">Stok(Palet)</th>
+                  <th class="text-muted">Birim Fiyat(₺)</th>
+                  {% comment %} <th class="text-muted">Koli Fiyat(₺)</th> {% endcomment %}
+                  <th class="text-muted">Vergi(%)</th>
+                  <th class="text-muted">Palet Adet</th>
+                  <th class="text-muted">İskonto(%)</th>
+                  <th class="text-muted">KDV Tutarı(₺)</th>
+                  <th class="text-muted">Mal-Hizmet(₺)</th>
+                  <th class="text-muted">Toplam Adet</th>
+                  {% comment %} <th class="text-muted">Bir Palet</th> {% endcomment %}
+                  {% comment %} <th class="text-muted">Bir Koli</th> {% endcomment %}
+
+                </tr>
+              </thead>
+              <tbody>
+                {% for object in product_list %}
+                <tr>
+                  {% comment %} <td> {{object.code}}</td> {% endcomment %}
+                  <td> {{object.name}}({{object.palette_package_quantity}}K {{object.palette_quantity}}A)</td>
+                  <td> {{object.stock_quantity}}</td>
+                  <td>{{object.price|floatformat:2 }}</td>
+                  {% comment %} <td>{{object.price_palette|floatformat:2 }}</td> {% endcomment %}
+                  <td> {{object.vat}}</td>
+                  <td><input type="number" class="form-control" id="quantity_{{object.id}}"
+                      name="quantity_{{object.id}}" value="0"
+                      onchange="calculateTotal({{object.id}},{{object.price_palette}},{{object.vat}},{{object.palette_quantity}})"></td>
+                  <td><input type="number" class="form-control" id="discount_{{object.id}}"
+                      name="discount_{{object.id}}" value="0"
+                      onchange="calculateTotal({{object.id}},{{object.price_palette}},{{object.vat}},{{object.palette_quantity}})"></td>
+                  <td id="vat_{{object.id}}" name="vat_{{object.id}}">0</td>
+                  <td id="total_{{object.id}}" name="total_{{object.id}}">0</td>
+                  <td id="adet_{{object.id}}" name="total_{{object.id}}">0</td>
+                  {% comment %} <td>{{object.palette_package_quantity}}K {{object.palette_quantity}}A</td> {% endcomment %}
+                  {% comment %} <td>{{object.package_quantity}} Adet</td> {% endcomment %}
+
+                </tr>
+                {% endfor %}
+
+              </tbody>
+
+            </table>
+            
+            
+
+          </div>
+
+          <br>
+           
+
+          <div class="row">
+
+              <div class="col-md-9 col-sm-9 col-12">
+                <label class="text-muted" id="totalSum2" name="totalSum2">Genel Toplam:0₺</label>
+              </div>
+
+
+              <div class="col-md-3 col-sm-3 col-12">
+                <button name="submit" type="submit" class="btn btn-success">Kaydet</button>
+              </div>
+          </div>
+
+        </div>
+      </form>
+      <!-- /.card-body -->
+    </div>
+
+  </section>
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+  calculateTotal = (product_id, price,vat,palette_quantity) => {
+
+    // Get the discount and quantity input fields for a product with a given product_id
+    const discountInput = $("#discount_" + product_id);
+    const quantityInput = $("#quantity_" + product_id);
+    const totalInput = $("#total_" + product_id);
+    const vatInput = $("#vat_" + product_id);
+
+    // Get the values of the discount and quantity input fields
+    let discount = Number(discountInput.val());
+    const quantity = Number(quantityInput.val());
+  
+    if (discount >= 100) {
+      discount = 0;
+      discountInput.val(discount);
+    }
+
+
+    
+    let total = (price - (price * discount / 100)) * quantity;
+    //alert("vat:"+vat+" total:"+total)
+    let total_vat = (total * vat / 100);
+    total = total.toFixed(2); // round to 2 decimal place
+    total = parseFloat(total); // convert back to a number
+    total_vat = total_vat.toFixed(2); // round to 2 decimal place
+    total_vat = parseFloat(total_vat); // convert back to a number
+
+
+    $("#total_" + product_id).text(total); // Using jQuery
+    $("#vat_" + product_id).text(total_vat); // Using jQuery
+    $("#adet_" + product_id).text(palette_quantity*quantity); // Using jQuery
+
+    // Get all the table cells with an ID starting with "total"
+    const totalCells = document.querySelectorAll("td[id^='total_']");
+    const vat_totalCells = document.querySelectorAll("td[id^='vat_']");
+
+    // Initialize the sum variable
+    let totalSum = 0;
+    let vat_totalSum = 0;
+
+    // Loop through the cells and sum their values
+    for (let i = 0; i < totalCells.length; i++) {
+      const cellValue = parseFloat(totalCells[i].innerHTML);
+      totalSum += cellValue;
+      const vat_cellValue = parseFloat(vat_totalCells[i].innerHTML);
+      vat_totalSum += vat_cellValue;
+    }
+
+    if (totalSum > 0) {
+      let all_total = totalSum + vat_totalSum
+      all_total = all_total.toFixed(2); // round to 1 decimal place
+      all_total = parseFloat(all_total); // convert back to a number
+      totalSum = totalSum.toFixed(2); // round to 1 decimal place
+      totalSum = parseFloat(totalSum); // convert back to a number
+      vat_totalSum = vat_totalSum.toFixed(2); // round to 1 decimal place
+      vat_totalSum = parseFloat(vat_totalSum); // convert back to a number
+     // const formattedAmount = totalSum.toLocaleString('en-EN', {
+    //    style: 'currency',
+     //   currency: 'TRY'
+     // });
+     const formattedAmount = "Sipariş Toplam:"+totalSum+"₺ KDV Toplam:"+vat_totalSum+"₺ Genel Toplam:"+all_total+"₺"
+      $("#totalSum,#totalSum2").text(formattedAmount);
+      //$("#totalSum2").text(formattedAmount);
+    } else {
+      $("#totalSum,#totalSum2").text("Genel Toplam:0₺");
+      //$("#totalSum2").text("Genel Toplam:0₺");
+    }
+
+
+  }
+</script>
+
+
+
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "bPaginate": false,
+      "iDisplayLength": 25,
+      "order": [
+        [2, "desc"]
+      ],
+      "searching": false, // disable search field,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    });
+  });
+</script>
+
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    if ($("#company_id").val() == 0) {
+      alert("Lütfen Şirket seçimi yapınız...");
+      $("#company_id").focus();
+      return false;
+    }
+
+    const totalCells = document.querySelectorAll("td[id^='total_']");
+    let totalSum = 0;
+
+    // Loop through the cells and sum their values
+    for (let i = 0; i < totalCells.length; i++) {
+      const cellValue = parseFloat(totalCells[i].innerHTML);
+      totalSum += cellValue;
+    }
+
+    if (totalSum == 0) {
+      alert("Lütfen En az bir tane Ürün alım bilgisi giriniz...");
+      $("#company_id").focus();
+      return false;
+    }
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+
+  })
+</script>
+
+
+{% endblock %}

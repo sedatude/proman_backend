@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="text-muted">Malzeme Satın Alma Kayıtları</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+                        <li class="breadcrumb-item active">Satın Alma</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- /.table -->
+    <section class="content">
+        <div class="card">
+
+            <div class="card-header">
+                <h1 class="card-title text-success"> ONAY LİSTESİ :
+                    {% for user in user_list %}
+                    {{user}}@borline.com.tr
+                    {% endfor %}
+                </h1>
+                <br>
+                <h1 class="card-title text-warning">Sipariş onaylandıktan sonra yetkili kullanıcılara e-mail olarak
+                    gönderilecektir. </h1>
+
+
+                <br>
+                <h1 class="card-title text-warning"> Lütfen fiyat girişi bitince kontrollerinizi yaptıktan sonra Onayla butonuna tıklayınız.
+                </h1>
+                <br>
+                <h1 class="card-title text-warning">Sipariş detayları için lütfen <b>No</b> üzerine tıklayınız. </h1>
+                <br>
+                <h1 class="card-title text-warning">Malzeme Sipariş detayları için lütfen <b>M-No</b>(Malzeme Sipariş No) üzerine tıklayınız. </h1>
+                <br>
+               
+            </div>
+            <!-- /.card-header -->
+            {% if purchasing_list %}
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-muted">No</th>
+                            <th class="text-muted">M-No</th>
+                            <th class="text-muted">Tarih</th>
+                            <th class="text-muted">Malzeme</th>
+                            <th class="text-muted">Not</th>
+                            <th class="text-muted">Miktar</th>
+                            <th class="text-muted">Toplam Fiyat</th>
+                            <th class="text-muted">Durum</th>
+                            <th class="text-muted">Fiyat İşlemleri</th>
+                            <th class="text-muted">Yönetici Onay</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in purchasing_list %}
+
+                        
+                        {% if object.status_id == 6 %}
+                        <tr class="text-success">
+                        {% elif object.status_id == 7 %}
+                        <tr class="text-danger">
+                        {%else%}
+                        <tr class="text-warning">
+                        {%endif%} 
+                            <td><a href="{%url 'purchasing_price_details' object.order_id%}">{{object.order_id}}<a></td>
+                            <td><a href="{%url 'purchasing_material_price_details' object.id%}">{{object.id}}<a></td>
+                            <td>{{object.order__created_at|date:"Y-m-d H:i"}}</td>
+                            <td> {{object.material__name}}({{object.material__description}})</td>
+                            <td>{{object.note}}</td>
+                            <td>{{object.quantity|floatformat:0}} {{object.material__measurement_type__name}}</td>
+                            
+                            
+                            
+                            <td>{{object.total_price}}</td>
+                            <td>{{object.status__name}}</td>
+                            <td>
+                                {%if object.status_id == 2 %}
+
+                                    <ul class="list-inline m-0">
+                                        <li class="list-inline-item">
+                                            <button class="btn btn-success btn-sm rounded-0" type="button"
+                                                data-toggle="modal" data-target="#modal-warning_{{ object.id }}"
+                                                title="Fiyatları Onayla"><i class="fa fa-check"></i></button>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="{% url 'purchasing_edit_price' object.id %}">
+                                                <button class="btn btn-warning btn-sm rounded-0" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="Fiyat Girişi"><i
+                                                        class="fa fa-edit"></i></button>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                   
+                                {%else%}
+
+                                
+                                <a class="btn btn-block btn-outline-success"> Tamam</a>
+
+                                {%endif%}
+                            </td>
+
+                            <td>
+                                {%if object.status_id == 5 %}
+                                    <a href="{% url 'purchasing_manager_confirmation' object.id %}" 
+                                    class="btn btn-block btn-outline-success"> Güncelle</a>
+                                {%elif object.status_id == 6 %}
+                                    <a class="btn btn-block btn-outline-success"> Onaylandı</a>
+                                {%elif object.status_id == 7 %}
+                                    <a class="btn btn-block btn-outline-danger"> İptal</a>
+
+                                {%else%}
+                                    <button class="btn btn-warning" type="button" disabled title="İşlem Yapılamaz">Beklemede</button>
+                                {%endif%}
+                            </td>
+                            
+
+                                <div class="modal fade" id="modal-warning_{{ object.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content bg-success">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">EMİN MİSİNİZ? No:{{object.id}}</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <onspan aria-hidden="true">&times;</onspan>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>No:{{object.id}} Yönetici Onayına Gönderilecek! </p>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+
+                                                <form action="{% url  'purchasing_confirm_price' %}" method='post'
+                                                    enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="object_id" value="{{ object.id }}">
+                                                    <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+                                                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+                            {% endfor %}
+
+                    </tbody>
+
+                </table>
+                <br>
+            <div class="row">
+                <div class="col-sm-3"><span class="text-sm badge bg-success">Onayladı</span> </div>
+                
+                <div div class="col-sm-3"><span class="text-sm badge bg-warning">İşlem Bekleniyor</span> </div>
+                <div div class="col-sm-3"><span class="text-sm badge bg-danger">İptal Edildi</span> </div>
+            </div>
+            </div>
+            
+
+            {% else %}
+            <div class="card-header">
+                <h1 class="card-title text-muted"> Onay Bekleyen Sipariş Listesi bulunamadı. </h1>
+                <br><br>
+                <a href="{% url 'purchasing_new_order' %}"> <button class="btn btn-sm btn-outline-success">Yeni Sipariş
+                        Ekle</button></a>
+            </div>
+            {% endif %}
+            <!-- /.card-body -->
+        </div>
+
+
+    </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+
+
+
+<script>
+    $(function () {
+
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "bPaginate": true,
+            "iDisplayLength": 50,
+            "order": [
+                [1, "desc"]
+            ],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    });
+
+
+    $('form').on('submit', function () {
+
+        $('.modal').removeClass('in');
+        $('.modal').attr("aria-hidden", "true");
+        $('.modal').css("display", "none");
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+
+
+        Swal.fire({
+            title: 'Güncelleniyor...',
+            html: 'Lütfen Bekleyiniz...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+    })
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock %}

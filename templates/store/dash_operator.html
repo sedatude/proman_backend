@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+    <div class="card">
+     
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Depo Son Kayıtlar  </h1>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="text-muted">İrsaliye No</th>
+              <th class="text-muted">Tarih</th>
+              <th class="text-muted">Gönderen Firma</th>
+              <th class="text-muted">Genel Not</th>
+              <th class="text-muted">Malzeme Adı</th>
+              <th class="text-muted">Adet/Miktar</th>
+              <th class="text-muted">Eksik-Fazlalık</th>
+              <th class="text-muted">Not</th>
+              <th class="text-muted">Durum</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for object in stock_list %}
+
+            <tr>
+              <td>
+              <a href="{% url 'incoming_shipment_details' object.shipment_id %}">
+                {{object.shipment__despatch_number}}
+              </a>
+              </td>
+              <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+              <td>{{object.shipment__company__name}}</td>
+              <td>{{object.shipment__note}}</td>
+              <td>{{object.material__name}}</td>
+              <td>{{object.quantity}}</td>
+              <td>{{object.quantity_extra}}</td>
+              <td>{{object.note}}</td>
+              <td>
+                
+                {% if  object.shipment__status__name == "Onaylandı" %}
+                <button type="button" class="btn btn-outline-success">{{object.shipment__status__name}}</button>
+                {% elif object.shipment__status__name == "Onaylanmadı"  %}
+                <button type="button" class="btn btn-outline-danger">{{object.shipment__status__name}}</button>
+                {% else %} 
+                <button type="button" class="btn btn-outline-warning">{{object.shipment__status__name}}</button>
+                {% endif %}
+                
+              </td>
+            
+
+              {% endfor %}
+
+          </tbody>
+
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script>
+  
+  $(function () {
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50, "order": [[1, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  });
+</script>
+
+
+
+
+{% endblock %}

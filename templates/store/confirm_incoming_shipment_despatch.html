@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+    
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+  
+<section class="content">
+
+  <div class="card-body">
+
+    <div class="col-md-12">
+     
+        
+
+
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">Kayıt Tarihi</label>
+              <text id="date_start" name="date_start" class="form-control"
+                aria-readonly="true">{{shipin.created_at|date:"Y-m-d H:i:s"}}</text>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">İrsaliye No</label>
+              <text id="number_str" name="number_str"  class="form-control" aria-readonly="true">{{shipin.despatch_number}}</text>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">Gönderen Firma</label>
+              <text id="date_start" name="date_start" class="form-control"
+                aria-readonly="true">{{shipin.company.name}}</text>
+            </div>
+          </div>
+
+        </div>
+
+        
+        <div class="row">
+          {% if shipin.photo_1 %}
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">1. İrsaliye</label>
+              <a id="photo_1_ex" name="photo_1_ex" class="btn btn-block btn-outline-success" value=" {{ shipin.photo_1 }}" href="../../../media/{{shipin.photo_1}}" target="_blank">1. İrsaliye</a>
+            </div>
+          </div>
+          {% endif %}
+          
+
+          {% if shipin.photo_2 %}
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">2. İrsaliye</label>
+              <a id="photo_2_ex" name="photo_2_ex" class="btn btn-block btn-outline-success" value=" {{ shipin.photo_2 }}" href="../../../media/{{shipin.photo_2}}" target="_blank">2. İrsaliye</a>
+            </div>
+          </div>
+         
+          {% endif %}
+
+          {% if shipin.photo_3 %}
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="text-muted">3. İrsaliye</label>
+              <a id="photo_3_ex" name="photo_3_ex" class="btn btn-block btn-outline-success" value=" {{ shipin.photo_3 }}" href="../../../media/{{shipin.photo_3}}" target="_blank">3. İrsaliye</a>
+            </div>
+          </div>
+
+          {% endif %}
+
+          
+
+
+        </div>
+
+
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="form-group">
+              {% if shipin.note %}
+              <label class="text-muted">Genel Not: {{ shipin.note }}</label>
+              {%else%}
+              <label class="text-muted">Genel Not: Kullanıcı tarafından girilmedi...!</label>
+              {%endif%}
+              
+            </div>
+          </div>
+        </div>
+
+        <br>
+        <div class="row">
+          
+              <label class="text-muted">MALZEMELER</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Malzeme Adı</th>
+                    <th class="text-muted">Adet/Miktar</th>
+                    <th class="text-muted">Eksik-Fazlalık</th>
+                    <th class="text-muted">Not</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in stock_list %}
+                    <tr>
+                      <td>{{object.material__name}}</td>
+                      <td>{{object.quantity}}</td>
+                      <td>{{object.quantity_extra}}</td>
+                      <td>{{object.note}}</td>
+                    </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+            
+        </div>
+
+        <hr>
+        
+        <form action="{% url 'confirm_incoming_shipment_despatch' shipin.id %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-8">
+                      <div class="form-group">
+                        <label class="text-muted">Açıklama</label>
+                        <textarea id="note_manager" name="note_manager" class="form-control"  aria-readonly="true" placeholder="Lütfen açıklama giriniz..." ></textarea>
+                      </div>
+            </div>
+              
+              </div>
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label class="text-muted">Lütfen seçim yapın</label><br>
+                      <button name="confirm" type="submit" value="1" class="btn btn-success">ONAYLA</button>
+                      <button name="reject" type="submit" value="0" class="btn btn-danger"  > İPTAL ET</button>
+                </div>
+          
+            
+          </form>
+  
+    </div>
+
+
+
+
+  </div>
+ 
+
+
+  <!-- /.table -->
+ 
+
+ 
+
+</section>
+
+</div>
+
+
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+
+<script type="text/javascript">
+  
+
+  $('form').on('submit', function(){
+   
+    if($(document.activeElement).val() == 0){
+      if($('#note_manager').val().length < 5 ){
+        alert("LÜTFEN AÇIKLAMA GİRİNİZ..!");
+        return false;
+      }
+    }
+
+  
+
+    Swal.fire({
+      title: 'Güncelleniyor...',
+      html: 'Lütfen Bekleyiniz...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+    
+    
+  
+  })
+    
+    </script>
+  
+  {% endblock %}

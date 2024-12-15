@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Profil Güncelle</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Profil Güncelleme</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+
+        
+      </div>
+      <div class="card-body">
+
+        <div class="card-body">
+          <div class="card-body">
+            <div class="text-center">
+              <img src="{{userprofile.profile_picture.url}}" class="rounded-circle" alt="Profile Picture" width="200"
+                style="border-radius: 10px;">
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label>Ad</label>
+                      <input type="text" id="first_name" name="first_name" class="form-control"
+                        value="{{userprofile.user.first_name}}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label>Soyad</label>
+                      <input type="text" id="last_name" name="last_name" class="form-control"
+                        value="{{userprofile.user.last_name}}" required>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label>Telefon</label>
+                      <input type="text" id="phone_number" name="phone_number" class="form-control"
+                        value="{{userprofile.phone_number}}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label>Resim</label>
+                      <input type="file" name="profile_picture" id="profile_picture" class="form-control"
+                        accept="image/*" onchange="Filevalidation('profile_picture')"
+                        value=" {{ userprofile.profile_picture}}" href="../../../media/{{userprofile.profile_picture}}"
+                        target="_blank" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Adres</label>
+                    <textarea id="address_line_1" name="address_line_1" class="form-control"
+                      placeholder="Lütfen Adres giriniz...">{{ userprofile.address_line_1 }}</textarea>
+                  </div>
+
+
+                  <input type="submit" value="Güncelle" class="btn btn-primary">
+                </form>
+              </div>
+
+            </div> <!-- row.// -->
+          </div> <!-- card-body .// -->
+
+
+
+
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+
+        </div>
+        <!-- /.card-footer-->
+      </div>
+      <!-- /.card -->
+
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascript%}
+
+<script>
+  Filevalidation = (name) => {
+
+    const name_id = name
+    const fi = document.getElementById(name);
+    // Check if any file is selected.
+    if (fi.files.length > 0) {
+      for (const i = 0; i <= fi.files.length - 1; i++) {
+
+        const fsize = fi.files.item(i).size;
+        const name = fi.files.item(i).name
+        const file = Math.round((fsize / 1024));
+
+        if (!name.endsWith('.jpg') && !name.endsWith('.jpeg')) {
+          alert(name + " Sadece Resim dosyaları yüklenebilir!");
+          document.getElementById(name_id).value = "";
+          document.getElementById(name_id).innerHTML = "";
+
+
+          return "NOK"
+        }
+
+        return "OK"
+      }
+    }
+  }
+</script>
+
+
+<script type="text/javascript">
+  $('form').on('submit', function () {
+
+
+    $("body").loading({
+      stoppable: false,
+      message: "LÜTFEN BEKLEYİNİZ...",
+      theme: "dark"
+    });
+
+  })
+</script>
+
+{% endblock %}

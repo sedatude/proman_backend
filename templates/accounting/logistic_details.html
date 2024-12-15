@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="card-header text-muted">Ödeme No:{{cargo_info.id}} </h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard'%}">Anasayfa</a></li>
+            <li class="breadcrumb-item active">Nakliye Ödeme Detayları</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Default box -->
+      <div class="card">
+
+        <div class="card-body">
+
+          <div class="col-sm-12 col-md-12 col-12">
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Telefon No</label>
+                  <input type="text" id="phone_number" name="phone_number" class="form-control" cols="40" value="{{cargo_info.phone_number}}" disabled>
+
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Plaka No</label>
+                  <input type="text" id="vehicle" name="vehicle" class="form-control" cols="40" value="{{cargo_info.vehicle}}" disabled>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">İrsaliye No</label>
+                  <input type="text" id="waybill_number" name="waybill_number" class="form-control" cols="40" value="{{cargo_info.despatch_number}}" disabled>
+
+                </div>
+              </div>
+             
+            </div>
+
+       
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">1. İrsaliye</label>
+                  {% if cargo_info.photo_1 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_1}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">2. İrsaliye</label>
+                  {% if cargo_info.photo_2 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_2}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">3. İrsaliye</label>
+                  {% if cargo_info.photo_3 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.photo_3}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">1. Fatura</label>
+                  {% if cargo_info.invoice_1 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_1}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">2. Fatura</label>
+                  {% if cargo_info.invoice_2 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_2}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">3. Fatura</label>
+                  {% if cargo_info.invoice_3 %}
+                  <a class="btn btn-block btn-outline-success" href="../../../media/{{cargo_info.invoice_3}}"
+                    target="_blank">Tıklayın</a>
+                  {% else %}
+                  <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
+             
+
+            <div class="row">
+  
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Borç(₺)</label>
+                  <input type="text" id="total_price" name="total_price" class="form-control" cols="40"
+                    value="{{cargo_cost.amount}}" disabled>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Ödenen(₺)</label>
+                  <input type="text" id="total_paid" name="total_paid" class="form-control" cols="40"
+                    value="{{cargo_cost.total_paid}}" disabled>
+
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                  <label class="text-muted">Toplam Kalan(₺)</label>
+                  <input type="text" id="debt" name="debt" class="form-control" cols="40" value="{{cargo_cost.debt}}"
+                    disabled>
+
+                </div>
+              </div>
+
+            </div>
+
+              <div class="row">
+                <div class="col-md-8 col-sm-8 col-12">
+                  <div class="form-group">
+                    <label class="text-muted">Açıklama</label>
+                    <textarea id="note" name="note" class="form-control" disabled>{{ cargo_info.note }}</textarea>
+
+                  </div>
+                </div>
+              </div>
+
+               
+            <hr>
+
+
+
+            <br>
+
+            <div>
+
+              <label class="text-success">Nakliye Toplam:{{cargo_cost.price}}₺ KDV Toplam:{{cargo_cost.total_vat}}₺  Genel Toplam:{{cargo_cost.amount}}₺</label>
+              <br>
+              <label class="text-success">Ödeme Geçmişi</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Çıkış Tarihi</th>
+                    <th class="text-muted">Ödenen</th>
+                    <th class="text-muted">Kalan</th>
+                    <th class="text-muted">Ödeme Tarihi</th>
+                    <th class="text-muted">Fature-Dekont</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in history %}
+                  <tr class="text-success">
+                    <td>{{cargo_info.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>{{object.total_paid}}</td>
+                    <td>{{object.debt}}</td>
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}</td>
+                    <td>
+                      {% if object.invoice_1 %}
+                      <a class="btn btn-block btn-outline-success" href="../../../media/{{object.invoice_1}}"
+                        target="_blank">Tıklayın</a>
+                      {% else %}
+                      <a class="btn btn-block btn-outline-danger">Kayıt Yok</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <br>
+
+            <div class="row">
+
+              <label class="text-success">Kargo Detayları</label>
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-muted">Şirket</th>
+                    <th class="text-muted">Lokasyon</th>
+                    <th class="text-muted">Malzeme Adı</th>
+                    <th class="text-muted">Palet</th>
+                    <th class="text-muted">Sipariş-Teslim Tarihi</th>
+                    <th class="text-muted">Durum</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in cargo_details_list %}
+                  <tr>
+                    <td>{{object.company__name}}</td>
+                    <td>{{object.company__city__name}}</td>
+                    <td>{{object.product_details__product__name}}</td>
+                    <td>{{object.quantity}}</td>
+                    {% if object.finished_at %}
+                    <td>{{object.created_at|date:"Y-m-d H:i"}}-{{object.finished_at|date:"Y-m-d H:i"}}</td>
+                    {% else %}
+                    <td>{{object.created_at|date:"Y-m-d H:i:s"}}</td>
+                    {% endif %}
+                    {% if object.is_delivered %}
+                    <td>Teslim Edildi</td>
+                    {% else %}
+                    <td>Dağıtıma Çıktı</td>
+                    {% endif %}
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </section>
+
+
+</div>
+<!-- /.content -->
+
+
+
+{% endblock %}
+
+
+
+{% block javascript%}
+ 
+  
+
+{% endblock %}

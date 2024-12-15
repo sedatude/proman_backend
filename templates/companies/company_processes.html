@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+ 
+ 
+
+ 
+
+
+  <!-- /.table -->
+  <section class="content">
+   
+    <div class="card">
+
+      <div class="card-header">
+        <div class="col-md-4 col-sm-4 ">
+          <a href="{% url 'new_company' %}" class="btn btn-success">
+           Yeni Şirket </a>
+        </div>
+      </div>
+   
+
+      <div class="card-header">
+        <h1 class="card-title text-muted"> Şirket Silme ve Güncelleme İşlemlerini aşağıdaki ikonlara tıklayarak gerçekleştirebilirsiniz. </h1>
+        <br>  <br>
+      </div>
+
+     
+      <!-- /.card-header -->
+   
+        <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="text-muted">Numara</th>
+                <th class="text-muted">İsim</th>
+                <th class="text-muted">Tam İsim</th>
+                <th class="text-muted">Adres</th>
+                <th class="text-muted">Şehir</th>
+                <th class="text-muted">Telefon</th>
+                <th class="text-muted">E-mail</th>
+               
+                <th class="text-muted">İşlem</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for company in company_list %}
+
+              <tr>
+                <td>{{company.id}}</td>
+                <!-- <td>{{company.date_start|date:"Y-m-d H:i:s"}}</td> -->
+                <td>{{company.name}}</td>
+                <td>{{company.full_name}}</td>
+                <td>{{company.address}}</td>
+                <td>{{company.city__name}}</td>
+                <td>{{company.phone}}</td>
+                <td>{{company.email}}</td>
+              
+              
+                <!-- <td>{{company.user__first_name}}</td> -->
+                
+                  <td>
+                    <ul class="list-inline m-0">
+                    
+                      <li class="list-inline-item">
+                        <a href="{% url 'edit_company' company.id %}">
+                          <button class="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Güncelle"><i class="fa fa-edit"></i></button>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                          <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-target="#modal-danger_{{ company.id }}" title="Sil"><i class="fa fa-trash"></i></button>
+                      </li>
+                  </ul>
+                    
+                  </td>
+
+                <div class="modal fade" id="modal-danger_{{ company.id }}">
+                  <div class="modal-dialog">
+                    <div class="modal-content bg-danger">
+                      <div class="modal-header">
+                        <h4 class="modal-title">EMİN MİSİNİZ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{company.name}} Kaydı Silinecek! </p>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+
+                        <form action="{% url 'delete_company' %}" method='post'>
+                          {% csrf_token %}
+                          <input type="hidden" name="company_id" value="{{ company.id }}">
+                          <button type="submit" value="yes" class="btn btn-outline-light" onclick="this.form.submit();">EVET</button>
+
+                          <button type="button" class="btn btn-outline-light" data-dismiss="modal">HAYIR</button>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+
+              </tr>
+                {% endfor %}
+                
+            </tbody>
+
+          </table>
+        </div>
+      
+      <!-- /.card-body -->
+    </div>
+
+
+  </section>
+
+
+
+</div>
+<!-- /.content-wrapper -->
+
+
+
+
+
+{% endblock %}
+
+{% block javascript%}
+
+
+ 
+ 
+
+
+
+<script>
+  $(function () {
+
+  
+
+    
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,   "bPaginate": true, "iDisplayLength": 50,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  
+  });
+
+
+$('form').on('submit', function(){
+  $('.modal').removeClass('in');
+  $('.modal').attr("aria-hidden","true");
+  $('.modal').css("display", "none");
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open');
+ 
+  
+ $("body").loading({
+     stoppable: false,
+     message: "LÜTFEN BEKLEYİNİZ...",
+     theme: "dark"
+   });
+})
+
+
+</script>
+
+
+ 
+
+
+
+
+
+
+{% endblock %}
