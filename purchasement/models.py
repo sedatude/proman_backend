@@ -54,6 +54,11 @@ class PurchasementItem(models.Model):
 
 
 class PurchasementStep(models.Model):
+#     1	PV MODULE & CONNECTOR
+# 2	SOLAR CABLE
+# 3	INVERTER
+# 4	CONSTRUCTION MATERIAL (TRACKER)
+# 5	CIVIL&ELECTRICAL WORKS
     name = models.CharField(max_length=255, unique=True, verbose_name="Step Name")
     purchasement_type = models.ForeignKey(
         PurchasementType, 
@@ -92,39 +97,93 @@ class CostItem(models.Model):
         verbose_name="Purchasement Step"
     )
 
-    name = models.CharField(max_length=255, unique=True, verbose_name="Cost Item Name")
-    number = models.SmallIntegerField(default=1, verbose_name="Number")
-    description = models.TextField(verbose_name="Description", blank=True)
-
-    # Yeni eklenen alanlar
-    made_in = models.CharField(max_length=50, verbose_name="Made In", blank=True)
-    supplier = models.CharField(max_length=255, verbose_name="Supplier", blank=True)
-    producer_brand = models.CharField(max_length=255, verbose_name="Producer (Brand)", blank=True)
-    customs_required = models.BooleanField(default=False, verbose_name="Customs Required")
-    pa = models.BooleanField(default=False, verbose_name="PA")
-    pm = models.BooleanField(default=False, verbose_name="PM")
-    pd = models.BooleanField(default=False, verbose_name="PD")
-    notes = models.TextField(verbose_name="Notes", blank=True)
-
-    # Mevcut alanlar
-    material = models.CharField(max_length=255, verbose_name="Material")
-    brand = models.CharField(max_length=255, verbose_name="Brand", blank=True)
-    quantity = models.IntegerField(default=1, verbose_name="Quantity")
-    unit = models.CharField(max_length=50, verbose_name="Unit")
-    unit_price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Unit Price"
+    purchasement_type = models.CharField(
+        max_length=255, 
+        verbose_name="Cost Item Name", 
+        null=True
     )
-    total_price = models.DecimalField(
-        max_digits=15, decimal_places=2, verbose_name="Total Price"
+    name = models.CharField(
+        max_length=255, 
+        verbose_name="Cost Item Name", 
+        null=True
     )
+    number = models.SmallIntegerField(
+        default=1, 
+        verbose_name="Number", 
+        null=True
+    )
+    description = models.TextField(
+        verbose_name="Description", 
+        blank=True, 
+        null=True
+    )
+
+    made_in = models.CharField(
+        max_length=250, 
+        verbose_name="Made In", 
+        blank=True, 
+        null=True
+    )
+    supplier = models.CharField(
+        max_length=255, 
+        verbose_name="Supplier", 
+        blank=True, 
+        null=True
+    )
+    producer_brand = models.CharField(
+        max_length=500, 
+        verbose_name="Producer (Brand)", 
+        blank=True, 
+        null=True
+    )
+  # ...existing code...
+    customs_required = models.BooleanField(
+        default=False, 
+        verbose_name="Customs Required"
+    )
+    pa = models.ForeignKey(
+        'Account', 
+        on_delete=models.SET_NULL, 
+        verbose_name="PA", 
+        null=True, 
+        blank=True
+    )
+    pm = models.ForeignKey(
+        'Account', 
+        on_delete=models.SET_NULL, 
+        verbose_name="PM", 
+        null=True, 
+        blank=True
+    )
+    pd = models.ForeignKey(
+        'Account', 
+        on_delete=models.SET_NULL, 
+        verbose_name="PD", 
+        null=True, 
+        blank=True
+    )
+# ...existing code...
+    notes = models.TextField(
+        verbose_name="Notes", 
+        blank=True, 
+        null=True
+    )
+# ...existing code...
+    notes = models.TextField(
+        verbose_name="Notes", 
+        blank=True, 
+        null=True
+    )
+
     currency = models.ForeignKey(
         Money, 
         related_name='cost_items', 
         on_delete=models.PROTECT, 
-        verbose_name="Currency"
+        verbose_name="Currency", 
+        default=1
     )
-    detail_description = models.TextField(verbose_name="Detail Description", blank=True)
 
+ 
     class Meta:
         db_table = 'cost_item'
 

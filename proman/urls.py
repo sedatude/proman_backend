@@ -37,6 +37,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('common/', include('common.urls')),
     path('api/v1/', include('project.urls')),  # Project app'in URL'lerini dahil et
+    path('api/v1/', include('company.urls')),  # Project app'in URL'lerini dahil et
 
     path('user/', include('userprocess.urls')),
     path('_nested_admin/', include('nested_admin.urls')), 

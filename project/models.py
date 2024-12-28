@@ -19,7 +19,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Proje Adı")
     owner = models.ForeignKey(Company, related_name='project_owner', on_delete=models.DO_NOTHING, default=1)
     company = models.ForeignKey(Company, related_name='project_company', on_delete=models.DO_NOTHING, default=1)
-    company = models.ForeignKey(ProjectType, related_name='project_type', on_delete=models.DO_NOTHING, default=1)
+    type = models.ForeignKey(ProjectType, related_name='project_type', on_delete=models.DO_NOTHING, default=1)
     description = models.TextField(verbose_name="Açıklama", blank=True)
     start_date = models.DateField(verbose_name="Başlangıç Tarihi", default=now)
     estimated_end_date = models.DateField(verbose_name="Tahmini Bitiş Tarihi", default=now)

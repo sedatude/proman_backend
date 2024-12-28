@@ -20,7 +20,7 @@ import requests
   
 
 
-def login(request):
+def login(request): 
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -105,3 +105,5 @@ def edit_profile(request):
         'userprofile': userprofile,
     }
     return render(request, 'accounts/edit_profile.html', context)
+
+
