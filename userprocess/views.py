@@ -41,9 +41,7 @@ from common.models import Logs
 def users(request):
     
     userprofile = UserProfile.objects.get(user=request.user)   
-    try:
-        user_auth = UserAuth.objects.get(user_id=request.user.id, right__name="userprocess")
-    except UserAuth.DoesNotExist:
+    if not request.user.is_admin:
         context = {
         'userprofile': userprofile,
         }

@@ -17,6 +17,9 @@ from . import views
 
 urlpatterns = [
 
+
+    path('api/user_info/', views.UserDetailsView.as_view(), name='user_info'),
+    path('user_details', views.login, name='api/user_details'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),

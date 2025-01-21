@@ -47,7 +47,7 @@ class Company(models.Model):
     class Meta:
         verbose_name = 'company'    
         verbose_name_plural = 'companies'
-        db_table = 'company'  
+        db_table = 'company'                
 
 
     def __str__(self):

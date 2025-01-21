@@ -11,7 +11,8 @@ class PurchasementType(models.Model):
     description = models.CharField(max_length=255, default='', verbose_name="Description (EN)")
     code_tr = models.CharField(max_length=10, default='', verbose_name="Code")
     description_tr = models.CharField(max_length=255, default='', verbose_name="Description")
-    number = models.PositiveSmallIntegerField(default=1)
+    no = models.PositiveSmallIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
     # """	3	CS	CONSTRUCTION SMALL	3
     #     2	GB	GOODS BIG	2
     #     1	GS	GOODS SMALL	1"""
@@ -25,7 +26,7 @@ class PurchasementType(models.Model):
 class PurchasementItem(models.Model):
     name = models.CharField(max_length=800, verbose_name="Item Name")
     name_tr = models.CharField(max_length=800, verbose_name="Item Name (TR)")
-    number = models.PositiveSmallIntegerField(default=1, verbose_name="Item Number")
+    no = models.PositiveSmallIntegerField(default=1, verbose_name="Item Number")
     
     purchasement_type = models.ForeignKey(
         PurchasementType, 
@@ -36,7 +37,7 @@ class PurchasementItem(models.Model):
     )
     project_type = models.ForeignKey(
         ProjectType, 
-        related_name='project_items', 
+        related_name='items',  # Düzenlendi
         on_delete=models.DO_NOTHING, 
         default=1,
         verbose_name="Project Type"
@@ -46,7 +47,7 @@ class PurchasementItem(models.Model):
         db_table = 'purchasement_item'
         verbose_name = "Purchasement Item"
         verbose_name_plural = "Purchasement Items"
-        ordering = ['number']  # Sıralama için
+        ordering = ['no']  # Sıralama için
 
     def __str__(self):
         return f"{self.name} - {self.purchasement_type}"
@@ -59,7 +60,7 @@ class PurchasementStep(models.Model):
 # 3	INVERTER
 # 4	CONSTRUCTION MATERIAL (TRACKER)
 # 5	CIVIL&ELECTRICAL WORKS
-    name = models.CharField(max_length=255, unique=True, verbose_name="Step Name")
+    name = models.CharField(max_length=255, verbose_name="Step Name")
     purchasement_type = models.ForeignKey(
         PurchasementType, 
         related_name='purchasement_step_types', 
@@ -74,24 +75,25 @@ class PurchasementStep(models.Model):
         default=1,
         verbose_name="Project Type"
     )
-    number = models.PositiveSmallIntegerField(default=1)
+    no = models.PositiveSmallIntegerField(default=1)
     # 2	SOLAR CABLE	2	Solar Power Plant	GB: GOODS BIG
 	# 1	PV MODULE & CONNECTOR	1	Solar Power Plant	GB: GOODS BIG
     
     class Meta:
         db_table = 'purchasement_step'   
 
-class CostItem(models.Model):
+""""burada ilk gelen adımlar var alt adımlar değil """
+class PurchasementStepDetail(models.Model):
     project = models.ForeignKey(
         Project, 
-        related_name='project_cost_items', 
+        related_name='step_details',  # Düzenlendi
         on_delete=models.DO_NOTHING, 
         default=1, 
         verbose_name="Project"
     )
     purchasement_step = models.ForeignKey(
         PurchasementStep, 
-        related_name='step_cost_items', 
+        related_name='details',  # Düzenlendi
         on_delete=models.DO_NOTHING, 
         default=1, 
         verbose_name="Purchasement Step"
@@ -107,7 +109,7 @@ class CostItem(models.Model):
         verbose_name="Cost Item Name", 
         null=True
     )
-    number = models.SmallIntegerField(
+    no = models.SmallIntegerField(
         default=1, 
         verbose_name="Number", 
         null=True
@@ -136,44 +138,42 @@ class CostItem(models.Model):
         blank=True, 
         null=True
     )
-  # ...existing code...
-    customs_required = models.BooleanField(
-        default=False, 
-        verbose_name="Customs Required"
-    )
+ 
+    customs_required = models.CharField(
+        max_length=3, 
+       default= '?',
+       )
     pa = models.ForeignKey(
-        'Account', 
+        Account, 
         on_delete=models.SET_NULL, 
         verbose_name="PA", 
         null=True, 
-        blank=True
+        blank=True,
+        related_name='pa_items'  # Düzenlendi
     )
     pm = models.ForeignKey(
-        'Account', 
+        Account, 
         on_delete=models.SET_NULL, 
         verbose_name="PM", 
         null=True, 
-        blank=True
+        blank=True,
+        related_name='pm_items'  # Düzenlendi
     )
     pd = models.ForeignKey(
-        'Account', 
+        Account, 
         on_delete=models.SET_NULL, 
         verbose_name="PD", 
         null=True, 
-        blank=True
+        blank=True,
+        related_name='pd_items'  # Düzenlendi
     )
-# ...existing code...
+
     notes = models.TextField(
         verbose_name="Notes", 
         blank=True, 
         null=True
     )
-# ...existing code...
-    notes = models.TextField(
-        verbose_name="Notes", 
-        blank=True, 
-        null=True
-    )
+
 
     currency = models.ForeignKey(
         Money, 
@@ -185,59 +185,73 @@ class CostItem(models.Model):
 
  
     class Meta:
-        db_table = 'cost_item'
+        db_table = 'purchasement_step_detail'
 
     def __str__(self):
-        return f"{self.name} - {self.material}"
+        return f"{self.name}"
 
 
- 
-class TaskDetail(models.Model):
+ #burada  alt adımlar var 
+class PurchasementDetail(models.Model):
     project = models.ForeignKey(
         Project, 
-        related_name='task_details', 
+        related_name='purchasement_details', 
         on_delete=models.DO_NOTHING, 
         default=1, 
         verbose_name="Project"
     )
-    step = models.ForeignKey(
-        PurchasementStep, 
-        related_name='task_steps', 
+
+    purchasement_type = models.ForeignKey(
+        PurchasementType, 
+        related_name='purchasement_types', # 3	INVERTER
         on_delete=models.DO_NOTHING,
         verbose_name="Step"
     )
-    assigned = models.ForeignKey(
+    purchasement_step_detail = models.ForeignKey(
+        PurchasementStepDetail, 
+        related_name='purchasement_details', 
+        on_delete=models.DO_NOTHING,
+        verbose_name="Purchasement Step Detail"
+    )
+    purchasement_item = models.ForeignKey(
+        PurchasementItem, 
+        related_name='purchasement_items', 
+        on_delete=models.DO_NOTHING,
+        verbose_name="purchasement item"
+    )
+
+    name = models.CharField(max_length=1200, verbose_name="Step Name")
+    title = models.CharField(max_length=1200, verbose_name="Title Name")
+
+    assigned_users = models.ManyToManyField(
         Account,
         related_name='assigned_tasks', 
-        on_delete=models.DO_NOTHING, 
-        verbose_name="Assigned User"
+        verbose_name="Assigned Users"
     )
     owner = models.ForeignKey(
         Account,
-        related_name='owned_tasks', 
+        related_name='owned_purchasements', 
         on_delete=models.DO_NOTHING, 
         verbose_name="Owner User"
     )
     duration = models.CharField(max_length=50, verbose_name="Duration", blank=True, null=True)
-    start = models.DateField(verbose_name="Start Date", blank=True, null=True)
-    finish = models.DateField(verbose_name="Finish Date", blank=True, null=True)
-    title = models.CharField(max_length=255, verbose_name="Title")
-    progress = models.DecimalField(
-        max_digits=5, 
-        decimal_places=2, 
+    start_date = models.DateField(verbose_name="Start Date", blank=True, null=True)
+    finish_date = models.DateField(verbose_name="Finish Date", blank=True, null=True)
+    progress = models.PositiveSmallIntegerField(
         verbose_name="Progress (%)", 
-        default=0.00
+        default=0
     )
     progress_comments = models.TextField(verbose_name="Progress Comments", blank=True, null=True)
-    status = models.CharField(max_length=50, verbose_name="Status", blank=True, null=True)
+    status = models.CharField(max_length=50, verbose_name="Status", default="")
     complete_date = models.DateField(verbose_name="Complete Date", blank=True, null=True)
-    md_approval_status = models.CharField(max_length=50, verbose_name="MD Approval Status", blank=True, null=True)
+    md_approval_status = models.CharField(max_length=50, verbose_name="MD Approval Status", default="")
     notes = models.TextField(verbose_name="Notes", blank=True, null=True)
+    no = models.PositiveSmallIntegerField(default=1)
     
     class Meta:
-        db_table = 'task_detail'
-        verbose_name = "Task Detail"
-        verbose_name_plural = "Task Details"
+        db_table = 'purchasement_detail'
+        verbose_name = "Purchasement Detail"
+        verbose_name_plural = "Purchasement Details"
 
     def __str__(self):
         return self.title

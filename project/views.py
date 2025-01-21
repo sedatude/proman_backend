@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
- 
+from django.forms.models import model_to_dict
+
 
 from account.models import Account, UserAuth, UserProfile
 import os, pandas as pd
@@ -16,130 +17,186 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from common.models import Money
-from purchasement.models import CostItem, PurchasementStep
+from company.models import Company
+from purchasement.models import PurchasementItem, PurchasementStepDetail, PurchasementStep
 from .models import Project, ProjectType
 from .serializers import ProjectSerializer, ProjectTypeSerializer
-
-class ProjectDetailsView(APIView):
-    def get(self, request, project_id):
-        try:
-            # Gelen project_id'ye göre projeyi bul
-            project = Project.objects.get(id=project_id)
+from rest_framework.permissions import IsAuthenticated
+# class ProjectDetailsView(APIView):
+#     def get(self, request, project_id):
+#         try:
+#             # Gelen project_id'ye göre projeyi bul
+#             project = Project.objects.get(id=project_id)
             
      
-            cost_items = CostItem.objects.filter(project=project).values(
-                "id", "name", "number", "description", "made_in", "supplier",
-                "producer_brand", "customs_required", "pa", "pm", "pd", "notes",
-                "currency", "purchasement_step", "purchasement_step__purchasement_type", "purchasement_step__purchasement_type__code"
-            )
-            print(cost_items[0])
-            # Aktif kullanıcıları al
-            user_list = Account.objects.filter(is_active=True).values('id', 'email')
+#             cost_items = CostItem.objects.filter(project=project).values(
+#                 "id", "name", "no", "description", "made_in", "supplier",
+#                 "producer_brand", "customs_required", "pa", "pm", "pd", "notes",
+#                 "currency", "purchasement_step", "purchasement_step__purchasement_type", "purchasement_step__purchasement_type__code"
+#             )
+#             print(cost_items[0])
+#             # Aktif kullanıcıları al
+#             user_list = Account.objects.filter(is_active=True).values('id', 'email')
 
-            # Veriyi birleştir
-            response_data = {
-                "project": {
-                    "id": project.id,
-                    "name": project.name,
-                    "type_id": project.type_id,
-                    "start_date": project.start_date,
-                },
-                "cost_items": list(cost_items),
-                "user_list": list(user_list),
-            }
-           # print(response_data)
-            return Response(response_data, status=status.HTTP_200_OK)
-        except Project.DoesNotExist:
-            return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
+#             # Veriyi birleştir
+#             response_data = {
+#                 "project": {
+#                     "id": project.id,
+#                     "name": project.name,
+#                     "type_id": project.type_id,
+#                     "start_date": project.start_date,
+#                 },
+#                 "cost_items": list(cost_items),
+#                 "user_list": list(user_list),
+#             }
+#            # print(response_data)
+#             return Response(response_data, status=status.HTTP_200_OK)
+#         except Project.DoesNotExist:
+#             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
+# class ProjectListView(APIView):
+#     def get(self, request):
+#         projects = Project.objects.order_by('-start_date')[:10]
+#         serializer = ProjectSerializer(projects, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ProjectListView(APIView):
+   
+    permission_classes = (IsAuthenticated,)
     def get(self, request):
-        projects = Project.objects.order_by('-start_date')[:10]
-        serializer = ProjectSerializer(projects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        projects = Project.objects.filter(is_active=True).values(
+            'id', 'name', 'description', 'start_date', 'estimated_end_date', 'owner', 'company', 'company__name', 
+            'project_type', 'creater', 'is_template')
+        print(projects[0])
+        response_data = {
+            "project_list": list(projects),  # Convert QuerySet to list
+        }
+      
+        return Response(response_data, status=status.HTTP_200_OK)
+
+class AddProjectLoadDataListView(APIView):
+   
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+        project_type_list = ProjectType.objects.filter(is_active=True).values('id', 'name')
+       
+        result = PurchasementStep.objects.values(
+            'project_type_id', 'project_type__name'
+        ).annotate(
+            project_count=Count('id')
+        ).order_by('project_type__name')
+   
+
+        client_list = Company.objects.filter(is_active=True).values('id', 'name')
+
+        response_data = {
+            "project_type_list": list(project_type_list),  
+            "purchasement_list": list(result),
+            "client_list": list(client_list)
+        }
+      
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class ProjectCreateView(APIView):
     def post(self, request):
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-            project = serializer.save()  # Projeyi kaydediyoruz
-
-            # PurchasementStep'leri çekiyoruz
-            purchasement_steps = PurchasementStep.objects.filter(
-                project_type=project.type_id  # Proje türüne göre filtreleme
-            ).order_by('number')  # Number'a göre sıralama
-
-            # CostItem'ları oluşturuyoruz
-            cost_items = []
-            for step in purchasement_steps:
-                cost_item = CostItem.objects.create(
-                    project=project,
-                    purchasement_step=step,
-                    name=step.name,
-                    number=step.number,
-                    purchasement_type=step.purchasement_type.code,
-                    description=f"...",
-                    made_in="...",
-                    supplier="...",
-                    producer_brand="...",
-                    customs_required=False,
-                    pa=False,
-                    pm=False,
-                    pd=False,
-                    notes=f"Auto-generated cost item for step {step.name}",
-                    currency=Money.objects.first()  # Varsayılan bir para birimi
-                )
-                cost_items.append(cost_item)
-
-            # Tüm CostItem'ları liste formatında döndürüyoruz
-            cost_items_list = CostItem.objects.filter(project=project).values(
-                "id", "name", "number", "description", "made_in", "supplier",
-                "producer_brand", "customs_required", "pa", "pm", "pd", "notes",
-                "currency", "purchasement_step", "purchasement_type"
-            )
-            # Response verisi oluşturuyoruz
-            print(cost_items_list[0])
-            user_list = Account.objects.filter(is_active=True).values('id','email')
-            response_data = {
-                "project": serializer.data,
-                "cost_items": cost_items_list,
-                "user_list": user_list,
-            }
+        data=request.data
+        # PurchasementStep'leri çekiyoruz
+        print(data)
             
-            return Response(response_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProjectUpdateView(APIView):
-    def put(self, request, pk):
         try:
-            project = Project.objects.get(pk=pk)
-        except Project.DoesNotExist:
-            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+                        # Gelen verileri doğrula
+            if not Company.objects.filter(id=data.get('owner')).exists():
+                return Response({'error': 'Invalid owner ID'}, status=status.HTTP_400_BAD_REQUEST)
+            if not ProjectType.objects.filter(id=data.get('type')).exists():
+                return Response({'error': 'Invalid project type ID'}, status=status.HTTP_400_BAD_REQUEST)
+            if not Company.objects.filter(id=data.get('company')).exists():
+                return Response({'error': 'Invalid company ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Project oluştur
+            project = Project.objects.create(
+                name=data.get('name', ''),
+                description=data.get('description', ''),
+                owner_id=data.get('owner'),
+                project_type_id=data.get('type'),
+                company_id=data.get('company'),
+                start_date=data.get('start_date') or None,
+                estimated_end_date=data.get('estimated_end_date') or None,
+                completed_at=data.get('completed_at') or None,
+                creater_id=data.get('creator')  # Model alanıyla eşleştir
+            )
         
-        serializer = ProjectSerializer(project, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+          #  return Response({'message': 'Project saved successfully!', 'project_id': project.id}, status=status.HTTP_201_CREATED)
 
-class ProjectDeleteView(APIView):
-    def delete(self, request, pk):
-        try:
-            project = Project.objects.get(pk=pk)
-        except Project.DoesNotExist:
-            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+  
+        purchasement_steps = PurchasementStep.objects.filter(
+            project_type=project.project_type_id  # Proje türüne göre filtreleme
+        ).order_by('no')  # no'a göre sıralama
+        creater_id = project.creater_id
+        # CostItem'ları oluşturuyoruz
+        purchasement_step_details = []
+        for step in purchasement_steps:
+            purchasement_step_detail = PurchasementStepDetail.objects.create(
+                project=project,
+                purchasement_step=step,
+                name=step.name,
+                no=step.no,
+                purchasement_type=step.purchasement_type.code,
+                description=f"...",
+                made_in="...",
+                supplier="...",
+                producer_brand="...",
+                customs_required='?',
+                pa_id=creater_id,
+                pm_id=creater_id,
+                pd_id=creater_id,
+                notes=f"...",
+                currency=Money.objects.first()  # Varsayılan bir para birimi
+            )
+            purchasement_step_details.append(purchasement_step_detail)
+
+      
+        project_dict = model_to_dict(project)
         
-        project.delete()
-        return Response({"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        response_data = {
+            "project": project_dict,
+        }
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
+    #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProjectTypeListView(APIView):
-    def get(self, request):
-        active_project_types = ProjectType.objects.filter(is_active=True)  # Sadece aktif olanları al
-        serializer = ProjectTypeSerializer(active_project_types, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+# class ProjectUpdateView(APIView):
+#     def put(self, request, pk):
+#         try:
+#             project = Project.objects.get(pk=pk)
+#         except Project.DoesNotExist:
+#             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         serializer = ProjectSerializer(project, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class ProjectDeleteView(APIView):
+#     def delete(self, request, pk):
+#         try:
+#             project = Project.objects.get(pk=pk)
+#         except Project.DoesNotExist:
+#             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         project.delete()
+#         return Response({"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+# class ProjectTypeListView(APIView):
+#     def get(self, request):
+#         active_project_types = ProjectType.objects.filter(is_active=True)  # Sadece aktif olanları al
+#         serializer = ProjectTypeSerializer(active_project_types, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
     
 # @login_required(login_url = 'login')
 # def dashboard(request):

@@ -27,7 +27,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from .views import private_files_view
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+)
 
 
 urlpatterns = [
@@ -37,7 +41,11 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('common/', include('common.urls')),
     path('api/v1/', include('project.urls')),  # Project app'in URL'lerini dahil et
+    path('api/v1/', include('purchasement.urls')),  # Project app'in URL'lerini dahil et
     path('api/v1/', include('company.urls')),  # Project app'in URL'lerini dahil et
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     path('user/', include('userprocess.urls')),
     path('_nested_admin/', include('nested_admin.urls')), 

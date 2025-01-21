@@ -5,19 +5,36 @@ from .models import Account, UserProfile
  
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+
 from .forms import UserForm, UserProfileForm
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 # Verification email
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
+from rest_framework import status
+from rest_framework.response import Response
 
 import requests
 
   
+class UserDetailsView(APIView):
+   
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+        id = request.user.id
+        profilen_path = UserProfile.objects.filter(user_id=id).values('profile_picture').first()['profile_picture'] 
+        user_info = Account.objects.filter(id=id).values('id', 'first_name', 'last_name', 'email', 'user_type')[0]
+        user_info['profile_picture'] = profilen_path
+ 
+        response_data = {
+            "user_info": user_info,  # Convert QuerySet to list
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 def login(request): 
@@ -29,7 +46,7 @@ def login(request):
 
         if user is not None:
             auth.login(request, user)
-            return redirect('dashboard')
+            return redirect('users')
         else:
             messages.error(request, 'Lütfen bilgileri tekrar kontrol ediniz!')
             return redirect('login')
